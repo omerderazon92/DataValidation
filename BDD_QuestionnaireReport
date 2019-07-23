@@ -1,6 +1,7 @@
 {
     "user_name": "KCL_gsk_839015",
     "questionnaire_name": "Geriatric Depression Scale",
+    "actions": ["QUESTIONNAIRE_REPORT"],
     "questionnaire_timestamp_start": "2019-05-06 17:18:56.000",
     "questionnaire_timestamp_end": "2019-05-06 17:21:43.000",
     "status": "COMPLETE",
@@ -35,5 +36,7 @@
         "27": "false",
         "28": "true",
         "29": "false"
-    }
+    },
+    "hour": "08",
+    "minute": "00"
 }

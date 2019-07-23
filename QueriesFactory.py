@@ -11,11 +11,12 @@ class QuestionnaireQueryKeys(Enum):
     ANSWER = "answer"
     HOUR = "hour"
     MINUTE = "minute"
+    ACTIONS = "actions"
 
 
-class QueryTypes(Enum):
-    QUESTIONNAIRE_REPORT = ""
-    QUESTIONNAIRE_SCHEDULE = ""
+class ActionTypes(Enum):
+    QUESTIONNAIRE_REPORT = "0"
+    QUESTIONNAIRE_SCHEDULE = "1"
 
 
 basicQuestionnaireReportSqlQuery = Template("""SELECT * FROM "kcl"."questionnaire_report" 
@@ -27,8 +28,6 @@ order by question_order
 limit 100;""")
 
 basicQuestionnaireScheduleQuery = Template("""SELECT * FROM "kcl"."questionnaire_schedule" 
-where user_name = 'AssafKCLProd1'
-and questionnaire_name = 'Sleep Reporting'
-and hour = '09'
-and minute = '00'
+where user_name = '$user_name'
+and questionnaire_name = '$questionnaire_name'
 limit 1;""")

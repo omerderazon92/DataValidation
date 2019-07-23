@@ -1,56 +1,140 @@
-from QueriesFactory import basicQuestionnaireReportSqlQuery, QuestionnaireQueryKeys
+from QueriesFactory import basicQuestionnaireReportSqlQuery, basicQuestionnaireScheduleQuery, QuestionnaireQueryKeys, \
+    ActionTypes
 from QuestionnaireReportResults import QuestionnaireReportResults
 from pyathenajdbc import connect
 import pandas as pd
 import json
+
+logs = []
+
+
+def add_log(log):
+    logs.append(log)
+
+
+def extract_required_actions(loaded_json):
+    return loaded_json[QuestionnaireQueryKeys.ACTIONS.value]
+
+
+def compare_object_with_action(action, json_file_object, athena_results_object):
+    if action == ActionTypes.QUESTIONNAIRE_REPORT.name:
+        if len(json_file_object.questions_answers) != len(athena_results_object.questions_answers):
+            return False
+        else:
+            for index in range(0, len(athena_results_object.questions_answers)):
+                if athena_results_object.questions_answers[index] != json_file_object.questions_answers[index]:
+                    return False
+            if json_file_object.status != athena_results_object.status:
+                return False
+        return True
+    if action == ActionTypes.QUESTIONNAIRE_SCHEDULE.name:
+        if json_file_object.hour != athena_results_object.hour or json_file_object.minute != athena_results_object.minute:
+            return False
+        return True
+    pass
 
 
 def main():
     raw_files = get_files_by_date(1)
     for file in raw_files:
         with open(file) as json_file:
-            questionnaire_object = parse_json_into_object(json.load(json_file))
-            query = create_query_from_object(questionnaire_object)
-            results = scan_athena_using(query)
-            results_object = parse_results_into_object(results)
+            loaded_json = json.load(json_file)
+            actions = extract_required_actions(loaded_json)
 
-            if questionnaire_object == results_object:
-                print(json_file.name + " Passed successfully")
-            else:
-                print(json_file.name + " Failed")
-                print("Expected: " + str(questionnaire_object))
-                print("Actual" + str(results_object))
+            for action in actions:
+                json_file_object = parse_json_into_object(loaded_json, action)
+                query = create_query_from_object(json_file_object, action)
+                results = scan_athena_using(query)
+                athena_results_object = parse_results_into_object(results, action)
+
+                if compare_object_with_action(action, json_file_object, athena_results_object):
+                    add_log(json_file.name + "Passed successfully")
+                else:
+                    add_log(json_file.name + " Failed")
+                    add_log(json_file.name + " Expected: " + str(json_file_object))
+                    add_log(json_file.name + " Actual " + str(athena_results_object))
+    print(logs)
     pass
 
 
-def parse_json_into_object(json_file):
-    questionnaire_object = None
-    # create an object from the athena scan
-    questionnaire_object = QuestionnaireReportResults(json_file[QuestionnaireQueryKeys.USER_NAME.value],
-                                                      json_file[QuestionnaireQueryKeys.QUESTIONNAIRE_NAME.value],
-                                                      json_file[QuestionnaireQueryKeys.QUESTIONNAIRE_TIMESTAMP_START.value],
-                                                      json_file[QuestionnaireQueryKeys.QUESTIONNAIRE_TIMESTAMP_END.value],
-                                                      json_file[QuestionnaireQueryKeys.STATUS.value])
-    answers = json_file[QuestionnaireQueryKeys.ANSWER.value]
+def parse_json_into_object(json_file, action):
+    if action == ActionTypes.QUESTIONNAIRE_REPORT.name:
+        # create an object from the athena scan
+        questionnaire_object = QuestionnaireReportResults(json_file[QuestionnaireQueryKeys.USER_NAME.value],
+                                                          json_file[QuestionnaireQueryKeys.QUESTIONNAIRE_NAME.value],
+                                                          None,  # Action - not needed for comparing
+                                                          json_file[
+                                                              QuestionnaireQueryKeys.QUESTIONNAIRE_TIMESTAMP_START.value],
+                                                          json_file[
+                                                              QuestionnaireQueryKeys.QUESTIONNAIRE_TIMESTAMP_END.value],
+                                                          json_file[QuestionnaireQueryKeys.STATUS.value],
+                                                          None,  # Hour not needed for questionnaire report comparison
+                                                          None)  # Minute not needed for questionnaire report comparison
+        answers = json_file[QuestionnaireQueryKeys.ANSWER.value]
 
-    for index in range(0, len(answers)):
-        questionnaire_object.questions_answers.append(answers[str(index)])
+        for index in range(0, len(answers)):
+            questionnaire_object.questions_answers.append(answers[str(index)])
 
-    return questionnaire_object
+        return questionnaire_object
+
+    if action == ActionTypes.QUESTIONNAIRE_SCHEDULE.name:
+        # create an object from the athena scan
+        questionnaire_object = QuestionnaireReportResults(json_file[QuestionnaireQueryKeys.USER_NAME.value],
+                                                          json_file[QuestionnaireQueryKeys.QUESTIONNAIRE_NAME.value],
+                                                          None,  # Action - not needed for comparing
+                                                          None,  # Start time - not needed for shcedile comaprison
+                                                          None,  # End_time - not needed for shcedile comaprison
+                                                          None,  # Status - not needed for schedule comparision
+                                                          json_file[QuestionnaireQueryKeys.HOUR.value],
+                                                          json_file[QuestionnaireQueryKeys.MINUTE.value])
+        return questionnaire_object
 
 
-def parse_results_into_object(results):
-    # create an object from the athena scan
-    questionnaire_object = QuestionnaireReportResults(results[QuestionnaireQueryKeys.USER_NAME.value][0],
-                                                      results[QuestionnaireQueryKeys.QUESTIONNAIRE_NAME.value][0],
-                                                      results[QuestionnaireQueryKeys.QUESTIONNAIRE_TIMESTAMP_START.value][0],
-                                                      results[QuestionnaireQueryKeys.QUESTIONNAIRE_TIMESTAMP_END.value][0],
-                                                      results[QuestionnaireQueryKeys.STATUS.value][0])
-    answers = results[QuestionnaireQueryKeys.ANSWER.value]
-    for index in range(0, answers.size):
-        questionnaire_object.questions_answers.append(answers[index])
+def parse_results_into_object(results, action):
+    if action == ActionTypes.QUESTIONNAIRE_REPORT.name:
+        # create an object from the athena scan
+        questionnaire_object = QuestionnaireReportResults(results[QuestionnaireQueryKeys.USER_NAME.value][0],
+                                                          results[QuestionnaireQueryKeys.QUESTIONNAIRE_NAME.value][0],
+                                                          None,  # Action - not needed for comparing
+                                                          results[
+                                                              QuestionnaireQueryKeys.QUESTIONNAIRE_TIMESTAMP_START.value][
+                                                              0],
+                                                          results[
+                                                              QuestionnaireQueryKeys.QUESTIONNAIRE_TIMESTAMP_END.value][
+                                                              0],
+                                                          results[QuestionnaireQueryKeys.STATUS.value][0],
+                                                          None,  # Hour not needed for questionnaire report comparison
+                                                          None)  # Minute not needed for questionnaire report comparison
+        answers = results[QuestionnaireQueryKeys.ANSWER.value]
 
-    return questionnaire_object
+        for index in range(0, answers.size):
+            questionnaire_object.questions_answers.append(answers[index])
+
+        return questionnaire_object
+
+    if action == ActionTypes.QUESTIONNAIRE_SCHEDULE.name:
+        # create an object from the athena scan
+        questionnaire_object = QuestionnaireReportResults(results[QuestionnaireQueryKeys.USER_NAME.value][0],
+                                                          results[QuestionnaireQueryKeys.QUESTIONNAIRE_NAME.value][0],
+                                                          None,  # Action - not needed for comparing
+                                                          None,  # Start time - not needed for shcedile comaprison
+                                                          None,  # End_time - not needed for shcedile comaprison
+                                                          None,  # Status - not needed for schedule comparision
+                                                          results[QuestionnaireQueryKeys.HOUR.value][0],
+                                                          results[QuestionnaireQueryKeys.MINUTE.value][0])
+        return questionnaire_object
+
+
+def create_query_from_object(object, action):
+    if action == ActionTypes.QUESTIONNAIRE_REPORT.name:
+        return basicQuestionnaireReportSqlQuery.substitute(user_name=object.user_name,
+                                                           questionnaire_name=object.questionnaire_name,
+                                                           questionnaire_timestamp_start=object.questionnaire_timestamp_start,
+                                                           questionnaire_timestamp_end=object.questionnaire_timestamp_end)
+    if action == ActionTypes.QUESTIONNAIRE_SCHEDULE.name:
+        return basicQuestionnaireScheduleQuery.substitute(user_name=object.user_name,
+                                                          questionnaire_name=object.questionnaire_name,
+                                                          )
 
 
 def scan_athena_using(query):
@@ -62,13 +146,6 @@ def scan_athena_using(query):
         return pd.read_sql(query, conn)
     finally:
         print("")
-
-
-def create_query_from_object(object):
-    return basicQuestionnaireReportSqlQuery.substitute(user_name=object.user_name,
-                                                       questionnaire_name=object.questionnaire_name,
-                                                       questionnaire_timestamp_start=object.questionnaire_timestamp_start,
-                                                       questionnaire_timestamp_end=object.questionnaire_timestamp_end)
 
 
 def get_files_by_date(daysBack):
