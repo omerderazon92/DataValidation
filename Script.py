@@ -45,6 +45,9 @@ def main():
                 json_file_object = parse_json_into_object(loaded_json, action)
                 query = create_query_from_object(json_file_object, action)
                 results = scan_athena_using(query)
+                if results.empty:
+                    add_log(json_file.name + " couldn't query from athena, moving to next file...")
+                    continue
                 athena_results_object = parse_results_into_object(results, action)
 
                 if compare_objects_with_action(action, json_file_object, athena_results_object):
@@ -53,7 +56,7 @@ def main():
                     add_log(json_file.name + " Failed")
                     add_log(json_file.name + " Expected: " + str(json_file_object))
                     add_log(json_file.name + " Actual " + str(athena_results_object))
-    print(logs)
+    print("\n".join(logs))
     pass
 
 
@@ -144,6 +147,8 @@ def scan_athena_using(query):
                        region_name='eu-west-1',
                        schema_name='kclprep')
         return pd.read_sql(query, conn)
+    except ValueError:
+        print("Got error")
     finally:
         print("")
 
