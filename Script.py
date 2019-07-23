@@ -16,7 +16,7 @@ def extract_required_actions(loaded_json):
     return loaded_json[QuestionnaireQueryKeys.ACTIONS.value]
 
 
-def compare_object_with_action(action, json_file_object, athena_results_object):
+def compare_objects_with_action(action, json_file_object, athena_results_object):
     if action == ActionTypes.QUESTIONNAIRE_REPORT.name:
         if len(json_file_object.questions_answers) != len(athena_results_object.questions_answers):
             return False
@@ -47,7 +47,7 @@ def main():
                 results = scan_athena_using(query)
                 athena_results_object = parse_results_into_object(results, action)
 
-                if compare_object_with_action(action, json_file_object, athena_results_object):
+                if compare_objects_with_action(action, json_file_object, athena_results_object):
                     add_log(json_file.name + "Passed successfully")
                 else:
                     add_log(json_file.name + " Failed")
@@ -149,7 +149,7 @@ def scan_athena_using(query):
 
 
 def get_files_by_date(daysBack):
-    files_to_validate = ['BDD_QuestionnaireReport']
+    files_to_validate = ['BDD_Test01_QuestionnaireReport']
     return files_to_validate
 
 
