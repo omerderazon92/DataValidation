@@ -31,3 +31,15 @@ basicQuestionnaireScheduleQuery = Template("""SELECT * FROM "kcl"."questionnaire
 where user_name = '$user_name'
 and questionnaire_name = '$questionnaire_name'
 limit 1;""")
+
+
+def create_query(object, action):
+    if action == ActionTypes.QUESTIONNAIRE_REPORT.name:
+        return basicQuestionnaireReportSqlQuery.substitute(user_name=object.user_name,
+                                                           questionnaire_name=object.questionnaire_name,
+                                                           questionnaire_timestamp_start=object.questionnaire_timestamp_start,
+                                                           questionnaire_timestamp_end=object.questionnaire_timestamp_end)
+    if action == ActionTypes.QUESTIONNAIRE_SCHEDULE.name:
+        return basicQuestionnaireScheduleQuery.substitute(user_name=object.user_name,
+                                                          questionnaire_name=object.questionnaire_name,
+                                                          )
