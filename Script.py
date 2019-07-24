@@ -6,10 +6,16 @@ import pandas as pd
 import json
 
 logs = []
+tests_failed = 0
 
 
 def add_log(log):
     logs.append(log)
+
+
+def increment():
+    global tests_failed
+    tests_failed += 1
 
 
 def extract_required_actions(loaded_json):
@@ -23,44 +29,21 @@ def compare_objects_with_action(action, json_file_object, athena_results_object)
         else:
             for index in range(0, len(athena_results_object.questions_answers)):
                 if athena_results_object.questions_answers[index] != json_file_object.questions_answers[index]:
+                    increment()
                     return False
             if json_file_object.status != athena_results_object.status:
+                increment()
                 return False
         return True
     if action == ActionTypes.QUESTIONNAIRE_SCHEDULE.name:
         if json_file_object.hour != athena_results_object.hour or json_file_object.minute != athena_results_object.minute:
+            increment()
             return False
         return True
     pass
 
 
-def main():
-    raw_files = get_files_by_date(1)
-    for file in raw_files:
-        with open(file) as json_file:
-            loaded_json = json.load(json_file)
-            actions = extract_required_actions(loaded_json)
-
-            for action in actions:
-                json_file_object = parse_json_into_object(loaded_json, action)
-                query = create_query_from_object(json_file_object, action)
-                results = scan_athena_using(query)
-                if results.empty:
-                    add_log(json_file.name + " couldn't query from athena, moving to next file...")
-                    continue
-                athena_results_object = parse_results_into_object(results, action)
-
-                if compare_objects_with_action(action, json_file_object, athena_results_object):
-                    add_log(json_file.name + "Passed successfully")
-                else:
-                    add_log(json_file.name + " Failed")
-                    add_log(json_file.name + " Expected: " + str(json_file_object))
-                    add_log(json_file.name + " Actual " + str(athena_results_object))
-    print("\n".join(logs))
-    pass
-
-
-def parse_json_into_object(json_file, action):
+def parse_json_file(json_file, action):
     if action == ActionTypes.QUESTIONNAIRE_REPORT.name:
         # create an object from the athena scan
         questionnaire_object = QuestionnaireReportResults(json_file[QuestionnaireQueryKeys.USER_NAME.value],
@@ -93,7 +76,7 @@ def parse_json_into_object(json_file, action):
         return questionnaire_object
 
 
-def parse_results_into_object(results, action):
+def parse_athena_results(results, action):
     if action == ActionTypes.QUESTIONNAIRE_REPORT.name:
         # create an object from the athena scan
         questionnaire_object = QuestionnaireReportResults(results[QuestionnaireQueryKeys.USER_NAME.value][0],
@@ -128,7 +111,7 @@ def parse_results_into_object(results, action):
         return questionnaire_object
 
 
-def create_query_from_object(object, action):
+def create_query(object, action):
     if action == ActionTypes.QUESTIONNAIRE_REPORT.name:
         return basicQuestionnaireReportSqlQuery.substitute(user_name=object.user_name,
                                                            questionnaire_name=object.questionnaire_name,
@@ -140,7 +123,7 @@ def create_query_from_object(object, action):
                                                           )
 
 
-def scan_athena_using(query):
+def scan_athena(query):
     try:
         conn = connect(profile_name='health-customers',
                        s3_staging_dir='s3://aws-athena-query-results-eu-west-1-036573440528/',
@@ -156,6 +139,33 @@ def scan_athena_using(query):
 def get_files_by_date(daysBack):
     files_to_validate = ['BDD_Test01_QuestionnaireReport']
     return files_to_validate
+
+
+def main():
+    raw_files = get_files_by_date(1)
+    for file in raw_files:
+        with open(file) as json_file:
+            loaded_json = json.load(json_file)
+            actions = extract_required_actions(loaded_json)
+
+            for action in actions:
+                json_file_object = parse_json_file(loaded_json, action)
+                query = create_query(json_file_object, action)
+                results = scan_athena(query)
+                if results.empty:
+                    add_log(json_file.name + " couldn't query from athena, moving to next file...")
+                    continue
+                athena_results_object = parse_athena_results(results, action)
+
+                if compare_objects_with_action(action, json_file_object, athena_results_object):
+                    add_log(json_file.name + "Passed successfully")
+                else:
+                    add_log(json_file.name + " Failed")
+                    add_log(json_file.name + " Expected: " + str(json_file_object))
+                    add_log(json_file.name + " Actual " + str(athena_results_object))
+    logs.append(str(tests_failed) + "/" + str(len(raw_files)) + " has failed")
+    print("\n".join(logs))
+    pass
 
 
 if __name__ == '__main__':
