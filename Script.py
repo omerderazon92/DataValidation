@@ -1,5 +1,4 @@
-from QueriesFactory import basicQuestionnaireReportSqlQuery, basicQuestionnaireScheduleQuery, QuestionnaireQueryKeys, \
-    ActionTypes
+from QueriesFactory import QuestionnaireQueryKeys, ActionTypes, create_query
 from QuestionnaireReportResults import QuestionnaireReportResults
 from pyathenajdbc import connect
 import pandas as pd
@@ -112,18 +111,6 @@ def parse_athena_results(results, action):
         return questionnaire_object
 
 
-def create_query(object, action):
-    if action == ActionTypes.QUESTIONNAIRE_REPORT.name:
-        return basicQuestionnaireReportSqlQuery.substitute(user_name=object.user_name,
-                                                           questionnaire_name=object.questionnaire_name,
-                                                           questionnaire_timestamp_start=object.questionnaire_timestamp_start,
-                                                           questionnaire_timestamp_end=object.questionnaire_timestamp_end)
-    if action == ActionTypes.QUESTIONNAIRE_SCHEDULE.name:
-        return basicQuestionnaireScheduleQuery.substitute(user_name=object.user_name,
-                                                          questionnaire_name=object.questionnaire_name,
-                                                          )
-
-
 def scan_athena(query):
     try:
         conn = connect(profile_name='health-customers',
@@ -157,7 +144,8 @@ def main():
                 query = create_query(json_file_object, action)
                 results = scan_athena(query)
                 if results.empty:
-                    add_log(json_file.name + " couldn't query from athena, moving to next file...")
+                    add_log(json_file.name + "couldn't query from athena or got an empty results, moving to next "
+                                             "file...")
                     increment()
                     continue
                 athena_results_object = parse_athena_results(results, action)
@@ -167,7 +155,8 @@ def main():
                 else:
                     add_log(json_file.name + " Failed")
                     add_log(json_file.name + " Expected: " + str(json_file_object))
-                    add_log(json_file.name + " Actual " + str(athena_results_object))
+                    add_log(json_file.name + " Actual    " + str(athena_results_object))
+
     logs.append(str(tests_failed) + "/" + str(len(raw_files)) + " has failed")
     print("\n".join(logs))
     pass
