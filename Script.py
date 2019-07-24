@@ -10,6 +10,7 @@ tests_failed = 0
 
 
 def add_log(log):
+    global logs
     logs.append(log)
 
 
@@ -68,8 +69,8 @@ def parse_json_file(json_file, action):
         questionnaire_object = QuestionnaireReportResults(json_file[QuestionnaireQueryKeys.USER_NAME.value],
                                                           json_file[QuestionnaireQueryKeys.QUESTIONNAIRE_NAME.value],
                                                           None,  # Action - not needed for comparing
-                                                          None,  # Start time - not needed for shcedile comaprison
-                                                          None,  # End_time - not needed for shcedile comaprison
+                                                          None,  # Start time - not needed for schedule comparison
+                                                          None,  # End_time - not needed for schedule comparison
                                                           None,  # Status - not needed for schedule comparision
                                                           json_file[QuestionnaireQueryKeys.HOUR.value],
                                                           json_file[QuestionnaireQueryKeys.MINUTE.value])
@@ -103,9 +104,9 @@ def parse_athena_results(results, action):
         questionnaire_object = QuestionnaireReportResults(results[QuestionnaireQueryKeys.USER_NAME.value][0],
                                                           results[QuestionnaireQueryKeys.QUESTIONNAIRE_NAME.value][0],
                                                           None,  # Action - not needed for comparing
-                                                          None,  # Start time - not needed for shcedile comaprison
-                                                          None,  # End_time - not needed for shcedile comaprison
-                                                          None,  # Status - not needed for schedule comparision
+                                                          None,  # Start time - not needed for schedule comparison
+                                                          None,  # End_time - not needed for schedule comparison
+                                                          None,  # Status - not needed for schedule comparison
                                                           results[QuestionnaireQueryKeys.HOUR.value][0],
                                                           results[QuestionnaireQueryKeys.MINUTE.value][0])
         return questionnaire_object
@@ -130,7 +131,7 @@ def scan_athena(query):
                        region_name='eu-west-1',
                        schema_name='kclprep')
         return pd.read_sql(query, conn)
-    except ValueError:
+    except:
         print("Got error")
     finally:
         print("")
@@ -147,6 +148,9 @@ def main():
         with open(file) as json_file:
             loaded_json = json.load(json_file)
             actions = extract_required_actions(loaded_json)
+            if len(actions) <= 0 or actions is None:
+                add_log(json_file.name + " didn't get any action to check, moving to next file...")
+                continue
 
             for action in actions:
                 json_file_object = parse_json_file(loaded_json, action)
@@ -154,6 +158,7 @@ def main():
                 results = scan_athena(query)
                 if results.empty:
                     add_log(json_file.name + " couldn't query from athena, moving to next file...")
+                    increment()
                     continue
                 athena_results_object = parse_athena_results(results, action)
 
