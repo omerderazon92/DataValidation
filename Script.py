@@ -2,7 +2,7 @@ from QueriesFactory import QuestionnaireQueryKeys, ActionTypes, create_query
 from QuestionnaireReportResults import QuestionnaireReportResults
 from pyathenajdbc import connect
 import pandas as pd
-import json
+import requests
 
 logs = []
 tests_failed = 0
@@ -124,19 +124,27 @@ def scan_athena(query):
         print("")
 
 
-def get_files_by_date(daysBack):
-    files_to_validate = ['BDD_Test01_QuestionnaireReport']
+def get_list_of_files():
+    files_to_validate = ['BDD-1564405596619.1912-test01247SleepTimeQuestionnaireScenario.json']
     return files_to_validate
 
 
+def get_file(file):
+    response = requests.get(
+        'http://aa-artifactory.intel.com:8081/artifactory/health-snapshot-local/com/intel/aa/validation_files/' + file,
+        auth=('jenkins', 'jenkins123!'))
+    return response.json()
+
+
 def main():
-    raw_files = get_files_by_date(1)
+    raw_files = get_list_of_files()
     for file in raw_files:
-        with open(file) as json_file:
-            loaded_json = json.load(json_file)
+            loaded_json = get_file(file)
+            if loaded_json is None:
+                add_log("couldn't get " + file + "from the artifactory, moving to the next file")
             actions = extract_required_actions(loaded_json)
             if len(actions) <= 0 or actions is None:
-                add_log(json_file.name + " didn't get any action to check, moving to next file...")
+                add_log(file + " didn't get any action to check, moving to next file...")
                 continue
 
             for action in actions:
@@ -144,18 +152,18 @@ def main():
                 query = create_query(json_file_object, action)
                 results = scan_athena(query)
                 if results.empty:
-                    add_log(json_file.name + "couldn't query from athena or got an empty results, moving to next "
+                    add_log(file + "couldn't query from athena or got an empty results, moving to next "
                                              "file...")
                     increment()
                     continue
                 athena_results_object = parse_athena_results(results, action)
 
                 if compare_objects_with_action(action, json_file_object, athena_results_object):
-                    add_log(json_file.name + "Passed successfully")
+                    add_log(file + "Passed successfully")
                 else:
-                    add_log(json_file.name + " Failed")
-                    add_log(json_file.name + " Expected: " + str(json_file_object))
-                    add_log(json_file.name + " Actual    " + str(athena_results_object))
+                    add_log(file + " Failed")
+                    add_log(file + " Expected: " + str(json_file_object))
+                    add_log(file + " Actual    " + str(athena_results_object))
 
     logs.append(str(tests_failed) + "/" + str(len(raw_files)) + " has failed")
     print("\n".join(logs))
