@@ -1,11 +1,14 @@
-from QueriesFactory import QuestionnaireQueryKeys, ActionTypes, create_query
+from QueriesFactory import QuestionnaireQueryKeys, ActionTypes, create_query, articfactory_adress
 from QuestionnaireReportResults import QuestionnaireReportResults
 from pyathenajdbc import connect
 import pandas as pd
+import re
 import requests
+from datetime import date
 
 logs = []
 tests_failed = 0
+date = date.today()
 
 
 def add_log(log):
@@ -118,52 +121,62 @@ def scan_athena(query):
                        region_name='eu-west-1',
                        schema_name='kclprep')
         return pd.read_sql(query, conn)
-    except:
-        print("Got error")
     finally:
         print("")
 
 
 def get_list_of_files():
-    files_to_validate = ['BDD-1564405596619.1912-test01247SleepTimeQuestionnaireScenario.json']
-    return files_to_validate
+    files = []
+    response = requests.get(articfactory_adress, auth=('jenkins', 'jenkins123!'))
+    if response:
+        response_content = str(response.content)
+        if response_content:
+            for match in re.finditer('href="BDD(.+?)json', response_content):
+                files.append(match.group(0).replace("href=\"", ''))
+            return files
 
 
-def get_file(file):
-    response = requests.get(
-        'http://aa-artifactory.intel.com:8081/artifactory/health-snapshot-local/com/intel/aa/validation_files/' + file,
-        auth=('jenkins', 'jenkins123!'))
-    return response.json()
+def download_file(file_name):
+    try:
+        response = requests.get(
+            articfactory_adress + file_name,
+            auth=('jenkins', 'jenkins123!'))
+        if response:
+            if response.json():
+                return response.json()
+    except ValueError:
+        add_log("Couldn't parse " + file_name + " into a JSON file, moving to the next file...")
 
 
 def main():
     raw_files = get_list_of_files()
-    for file in raw_files:
-            loaded_json = get_file(file)
-            if loaded_json is None:
-                add_log("couldn't get " + file + "from the artifactory, moving to the next file")
-            actions = extract_required_actions(loaded_json)
-            if len(actions) <= 0 or actions is None:
-                add_log(file + " didn't get any action to check, moving to next file...")
+    for file_name in raw_files:
+        loaded_json = download_file(file_name)
+        if loaded_json is None:
+            increment()
+            continue
+        actions = extract_required_actions(loaded_json)
+        if len(actions) <= 0 or actions is None:
+            add_log(file_name + " didn't get any action to check, moving to next file...")
+            continue
+
+        for action in actions:
+            json_file_object = parse_json_file(loaded_json, action)
+            query = create_query(json_file_object, action)
+            results = scan_athena(query)
+            if results.empty:
+                add_log(file_name + " couldn't query from athena or got an empty results, moving to next "
+                               "file...")
+                increment()
                 continue
+            athena_results_object = parse_athena_results(results, action)
 
-            for action in actions:
-                json_file_object = parse_json_file(loaded_json, action)
-                query = create_query(json_file_object, action)
-                results = scan_athena(query)
-                if results.empty:
-                    add_log(file + "couldn't query from athena or got an empty results, moving to next "
-                                             "file...")
-                    increment()
-                    continue
-                athena_results_object = parse_athena_results(results, action)
-
-                if compare_objects_with_action(action, json_file_object, athena_results_object):
-                    add_log(file + "Passed successfully")
-                else:
-                    add_log(file + " Failed")
-                    add_log(file + " Expected: " + str(json_file_object))
-                    add_log(file + " Actual    " + str(athena_results_object))
+            if compare_objects_with_action(action, json_file_object, athena_results_object):
+                add_log(file_name + " Passed successfully")
+            else:
+                add_log(file_name + " Failed")
+                add_log(file_name + " Expected: " + str(json_file_object))
+                add_log(file_name + " Actual    " + str(athena_results_object))
 
     logs.append(str(tests_failed) + "/" + str(len(raw_files)) + " has failed")
     print("\n".join(logs))
@@ -172,3 +185,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

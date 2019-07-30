@@ -1,6 +1,8 @@
 from string import Template
 from enum import Enum
 
+articfactory_adress = 'http://aa-artifactory.intel.com:8081/artifactory/health-snapshot-local/com/intel/aa/validation_files/'
+
 
 class QuestionnaireQueryKeys(Enum):
     QUESTIONNAIRE_TIMESTAMP_START = "questionnaire_timestamp_start"
