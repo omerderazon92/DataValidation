@@ -1,5 +1,5 @@
 from QueriesFactory import QuestionnaireQueryKeys, ActionTypes, create_query, articfactory_adress
-from QuestionnaireReportResults import QuestionnaireReportResults
+from ObjectsParser import parse_json_file, parse_athena_results
 from pyathenajdbc import connect
 import pandas as pd
 import re
@@ -45,75 +45,6 @@ def compare_objects_with_action(action, json_file_object, athena_results_object)
         return True
     pass
 
-
-def parse_json_file(json_file, action):
-    if action == ActionTypes.QUESTIONNAIRE_REPORT.name:
-        # create an object from the athena scan
-        questionnaire_object = QuestionnaireReportResults(json_file[QuestionnaireQueryKeys.USER_NAME.value],
-                                                          json_file[QuestionnaireQueryKeys.QUESTIONNAIRE_NAME.value],
-                                                          None,  # Action - not needed for comparing
-                                                          json_file[
-                                                              QuestionnaireQueryKeys.QUESTIONNAIRE_TIMESTAMP_START.value],
-                                                          json_file[
-                                                              QuestionnaireQueryKeys.QUESTIONNAIRE_TIMESTAMP_END.value],
-                                                          json_file[QuestionnaireQueryKeys.STATUS.value],
-                                                          None,  # Hour not needed for questionnaire report comparison
-                                                          None)  # Minute not needed for questionnaire report comparison
-        answers = json_file[QuestionnaireQueryKeys.ANSWER.value]
-
-        for index in range(0, len(answers)):
-            questionnaire_object.questions_answers.append(answers[str(index)])
-
-        return questionnaire_object
-
-    if action == ActionTypes.QUESTIONNAIRE_SCHEDULE.name:
-        # create an object from the athena scan
-        questionnaire_object = QuestionnaireReportResults(json_file[QuestionnaireQueryKeys.USER_NAME.value],
-                                                          json_file[QuestionnaireQueryKeys.QUESTIONNAIRE_NAME.value],
-                                                          None,  # Action - not needed for comparing
-                                                          None,  # Start time - not needed for schedule comparison
-                                                          None,  # End_time - not needed for schedule comparison
-                                                          None,  # Status - not needed for schedule comparision
-                                                          json_file[QuestionnaireQueryKeys.HOUR.value],
-                                                          json_file[QuestionnaireQueryKeys.MINUTE.value])
-        return questionnaire_object
-
-
-def parse_athena_results(results, action):
-    if action == ActionTypes.QUESTIONNAIRE_REPORT.name:
-        # create an object from the athena scan
-        questionnaire_object = QuestionnaireReportResults(results[QuestionnaireQueryKeys.USER_NAME.value][0],
-                                                          results[QuestionnaireQueryKeys.QUESTIONNAIRE_NAME.value][0],
-                                                          None,  # Action - not needed for comparing
-                                                          results[
-                                                              QuestionnaireQueryKeys.QUESTIONNAIRE_TIMESTAMP_START.value][
-                                                              0],
-                                                          results[
-                                                              QuestionnaireQueryKeys.QUESTIONNAIRE_TIMESTAMP_END.value][
-                                                              0],
-                                                          results[QuestionnaireQueryKeys.STATUS.value][0],
-                                                          None,  # Hour not needed for questionnaire report comparison
-                                                          None)  # Minute not needed for questionnaire report comparison
-        answers = results[QuestionnaireQueryKeys.ANSWER.value]
-
-        for index in range(0, answers.size):
-            questionnaire_object.questions_answers.append(answers[index])
-
-        return questionnaire_object
-
-    if action == ActionTypes.QUESTIONNAIRE_SCHEDULE.name:
-        # create an object from the athena scan
-        questionnaire_object = QuestionnaireReportResults(results[QuestionnaireQueryKeys.USER_NAME.value][0],
-                                                          results[QuestionnaireQueryKeys.QUESTIONNAIRE_NAME.value][0],
-                                                          None,  # Action - not needed for comparing
-                                                          None,  # Start time - not needed for schedule comparison
-                                                          None,  # End_time - not needed for schedule comparison
-                                                          None,  # Status - not needed for schedule comparison
-                                                          results[QuestionnaireQueryKeys.HOUR.value][0],
-                                                          results[QuestionnaireQueryKeys.MINUTE.value][0])
-        return questionnaire_object
-
-
 def scan_athena(query):
     try:
         conn = connect(profile_name='health-customers',
@@ -145,7 +76,7 @@ def download_file(file_name):
             if response.json():
                 return response.json()
     except ValueError:
-        add_log("Couldn't parse " + file_name + " into a JSON file, moving to the next file...")
+        add_log("Couldn't parse " + file_name + " into a JSON file, might be empty json. moving to the next file...")
 
 
 def main():
@@ -166,7 +97,7 @@ def main():
             results = scan_athena(query)
             if results.empty:
                 add_log(file_name + " couldn't query from athena or got an empty results, moving to next "
-                               "file...")
+                                    "file...")
                 increment()
                 continue
             athena_results_object = parse_athena_results(results, action)
@@ -185,4 +116,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
