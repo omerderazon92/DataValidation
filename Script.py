@@ -1,10 +1,12 @@
-from QueriesFactory import QuestionnaireQueryKeys, ActionTypes, create_query, articfactory_adress
-from ObjectsParser import parse_json_file, parse_athena_results
-from pyathenajdbc import connect
-import pandas as pd
-import re
-import requests
 from datetime import date
+
+import pandas as pd
+import requests
+from pyathenajdbc import connect
+import re
+
+from ObjectsParser import parse_json_file, parse_athena_results
+from QueriesFactory import QuestionnaireQueryKeys, ActionTypes, create_query, articfactory_adress
 
 logs = []
 tests_failed = 0
@@ -32,18 +34,24 @@ def compare_objects_with_action(action, json_file_object, athena_results_object)
         else:
             for index in range(0, len(athena_results_object.questions_answers)):
                 if athena_results_object.questions_answers[index] != json_file_object.questions_answers[index]:
-                    increment()
                     return False
             if json_file_object.status != athena_results_object.status:
-                increment()
                 return False
         return True
     if action == ActionTypes.QUESTIONNAIRE_SCHEDULE.name:
         if json_file_object.hour != athena_results_object.hour or json_file_object.minute != athena_results_object.minute:
-            increment()
+            return False
+        return True
+    if action == ActionTypes.ASSESSMENT_REPORT.name:
+        if json_file_object.assessment_name != athena_results_object.assessment_name or json_file_object.status != athena_results_object.status:
+            return False
+        return True
+    if action == ActionTypes.GYRO_DATA.name:
+        if athena_results_object.actual / athena_results_object.expected < 0.95:
             return False
         return True
     pass
+
 
 def scan_athena(query):
     try:
@@ -101,13 +109,13 @@ def main():
                 increment()
                 continue
             athena_results_object = parse_athena_results(results, action)
-
             if compare_objects_with_action(action, json_file_object, athena_results_object):
                 add_log(file_name + " Passed successfully")
             else:
                 add_log(file_name + " Failed")
                 add_log(file_name + " Expected: " + str(json_file_object))
                 add_log(file_name + " Actual    " + str(athena_results_object))
+                increment()
 
     logs.append(str(tests_failed) + "/" + str(len(raw_files)) + " has failed")
     print("\n".join(logs))

@@ -1,5 +1,5 @@
-from QueriesFactory import QuestionnaireQueryKeys, ActionTypes
-from QuestionnaireReportResults import QuestionnaireReportResults
+from QueriesFactory import QuestionnaireQueryKeys, AssessmentQueryKeys, WatchDataQueryKeys, ActionTypes
+from QuestionnaireReportResults import QuestionnaireReportResults, AssessmentReportResults, AssessmentDataValidation
 
 
 def parse_json_file(json_file, action):
@@ -34,10 +34,21 @@ def parse_json_file(json_file, action):
                                                           json_file[QuestionnaireQueryKeys.MINUTE.value])
         return questionnaire_object
 
+    if action == ActionTypes.ASSESSMENT_REPORT.name or action == ActionTypes.GYRO_DATA.name:
+        # create an object from the athena scan
+        assessment_object = AssessmentReportResults(json_file[AssessmentQueryKeys.USER_NAME.value],
+                                                    json_file[AssessmentQueryKeys.ASSESSMENT_NAME.value],
+                                                    None,  # Action - not needed for comparing
+                                                    json_file[AssessmentQueryKeys.ASSESSMENT_START_TIME.value],
+                                                    json_file[AssessmentQueryKeys.ASSESSMENT_END_TIME.value],
+                                                    None,  # triggered time stamp - not needed for now
+                                                    None,  # triggered end time stamp - not needed for now
+                                                    json_file[AssessmentQueryKeys.STATUS.value])
+        return assessment_object
+
 
 def parse_athena_results(results, action):
     if action == ActionTypes.QUESTIONNAIRE_REPORT.name:
-        # create an object from the athena scan
         questionnaire_object = QuestionnaireReportResults(results[QuestionnaireQueryKeys.USER_NAME.value][0],
                                                           results[QuestionnaireQueryKeys.QUESTIONNAIRE_NAME.value][0],
                                                           None,  # Action - not needed for comparing
@@ -58,7 +69,6 @@ def parse_athena_results(results, action):
         return questionnaire_object
 
     if action == ActionTypes.QUESTIONNAIRE_SCHEDULE.name:
-        # create an object from the athena scan
         questionnaire_object = QuestionnaireReportResults(results[QuestionnaireQueryKeys.USER_NAME.value][0],
                                                           results[QuestionnaireQueryKeys.QUESTIONNAIRE_NAME.value][0],
                                                           None,  # Action - not needed for comparing
@@ -68,3 +78,21 @@ def parse_athena_results(results, action):
                                                           results[QuestionnaireQueryKeys.HOUR.value][0],
                                                           results[QuestionnaireQueryKeys.MINUTE.value][0])
         return questionnaire_object
+
+    if action == ActionTypes.ASSESSMENT_REPORT.name:
+        assessment_object = AssessmentReportResults(results[AssessmentQueryKeys.USER_NAME.value][0],
+                                                    results[AssessmentQueryKeys.ASSESSMENT_NAME.value][0],
+                                                    None,  # Action - not needed for comparing
+                                                    results[AssessmentQueryKeys.ASSESSMENT_START_TIME.value][0],
+                                                    results[AssessmentQueryKeys.ASSESSMENT_END_TIME.value][0],
+                                                    None,  # triggered time stamp - not needed for now
+                                                    None,  # triggered end time stamp - not needed for now
+                                                    results[AssessmentQueryKeys.STATUS.value][0])
+        return assessment_object
+
+    if action == ActionTypes.GYRO_DATA.name:
+        gyro_object = AssessmentDataValidation(results[WatchDataQueryKeys.USER_NAME.value][0],
+                                               results[WatchDataQueryKeys.ASSESSMENT_ID.value][0],
+                                               results[WatchDataQueryKeys.ACTUAL.value][0],
+                                               results[WatchDataQueryKeys.EXPECTED.value][0])
+        return gyro_object
