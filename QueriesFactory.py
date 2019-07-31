@@ -57,8 +57,8 @@ limit 1;""")
 basicAssessmentReportQuery = Template("""SELECT * FROM "kclprep"."assessments_steps" 
 where user_name  = '$user_name'
 and assessment_name = '$assessment_name'
-and assessment_start = timestamp '$assessment_start'
-and assessment_end = timestamp '$assessment_end'
+and timestamp '$assessment_start' < assessment_start and timestamp '$assessment_start' > assessment_start - interval '30' second
+order by assessment_start desc
 limit 100;""")
 
 basicGyroQuery = Template("""SELECT NEW.user_name,

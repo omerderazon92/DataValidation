@@ -74,7 +74,6 @@ def get_list_of_files():
                 files.append(match.group(0).replace("href=\"", ''))
             return files
 
-
 def download_file(file_name):
     try:
         response = requests.get(
