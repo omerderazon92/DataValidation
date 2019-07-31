@@ -111,21 +111,24 @@ basicGyroQuery = Template("""SELECT NEW.user_name,
 
 
 def create_query(object, action):
-    if action == ActionTypes.QUESTIONNAIRE_REPORT.name:
-        return basicQuestionnaireReportSqlQuery.substitute(user_name=object.user_name,
-                                                           questionnaire_name=object.questionnaire_name,
-                                                           questionnaire_timestamp_start=object.questionnaire_timestamp_start,
-                                                           questionnaire_timestamp_end=object.questionnaire_timestamp_end)
-    if action == ActionTypes.QUESTIONNAIRE_SCHEDULE.name:
-        return basicQuestionnaireScheduleQuery.substitute(user_name=object.user_name,
-                                                          questionnaire_name=object.questionnaire_name,
-                                                          )
-    if action == ActionTypes.ASSESSMENT_REPORT.name:
-        return basicAssessmentReportQuery.substitute(user_name=object.user_name,
-                                                     assessment_name=object.assessment_name,
-                                                     assessment_start=object.assessment_start,
-                                                     assessment_end=object.assessment_end)
+    try:
+        if action == ActionTypes.QUESTIONNAIRE_REPORT.name:
+            return basicQuestionnaireReportSqlQuery.substitute(user_name=object.user_name,
+                                                               questionnaire_name=object.questionnaire_name,
+                                                               questionnaire_timestamp_start=object.questionnaire_timestamp_start,
+                                                               questionnaire_timestamp_end=object.questionnaire_timestamp_end)
+        if action == ActionTypes.QUESTIONNAIRE_SCHEDULE.name:
+            return basicQuestionnaireScheduleQuery.substitute(user_name=object.user_name,
+                                                              questionnaire_name=object.questionnaire_name,
+                                                              )
+        if action == ActionTypes.ASSESSMENT_REPORT.name:
+            return basicAssessmentReportQuery.substitute(user_name=object.user_name,
+                                                         assessment_name=object.assessment_name,
+                                                         assessment_start=object.assessment_start,
+                                                         assessment_end=object.assessment_end)
 
-    if action == ActionTypes.GYRO_DATA.name:
-        return basicGyroQuery.substitute(user_name=object.user_name,
-                                         assessment_end=object.assessment_end)
+        if action == ActionTypes.GYRO_DATA.name:
+            return basicGyroQuery.substitute(user_name=object.user_name,
+                                             assessment_end=object.assessment_end)
+    except KeyError or ValueError:
+        return
