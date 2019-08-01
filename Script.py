@@ -1,12 +1,8 @@
 from datetime import date
 
-import pandas as pd
-import requests
-from pyathenajdbc import connect
-import re
-
-from ObjectsParser import parse_json_file, parse_athena_results
-from QueriesFactory import QuestionnaireQueryKeys, ActionTypes, create_query, articfactory_adress
+from network.Preprod import get_list_of_files, download_file, scan_athena
+from objects.ObjectsParser import parse_json_file, parse_athena_results
+from queries.QueriesManager import ActionTypes, create_query, extract_required_actions
 
 logs = []
 tests_failed = 0
@@ -18,16 +14,9 @@ def add_log(log):
     logs.append(log)
 
 
-def increment():
+def report_fail():
     global tests_failed
     tests_failed += 1
-
-
-def extract_required_actions(loaded_json):
-    try:
-        return loaded_json[QuestionnaireQueryKeys.ACTIONS.value]
-    except KeyError or ValueError:
-        return
 
 
 def compare_objects_with_action(action, json_file_object, athena_results_object):
@@ -56,36 +45,6 @@ def compare_objects_with_action(action, json_file_object, athena_results_object)
     pass
 
 
-def scan_athena(query):
-    conn = connect(profile_name='health-customers',
-                   s3_staging_dir='s3://aws-athena-query-results-eu-west-1-036573440528/',
-                   region_name='eu-west-1',
-                   schema_name='kclprep')
-    return pd.read_sql(query, conn)
-
-
-def get_list_of_files():
-    files = []
-    response = requests.get(articfactory_adress, auth=('jenkins', 'jenkins123!'))
-    if response:
-        response_content = str(response.content)
-        if response_content:
-            for match in re.finditer('href="BDD(.+?)json', response_content):
-                files.append(match.group(0).replace("href=\"", ''))
-            return files
-
-def download_file(file_name):
-    try:
-        response = requests.get(
-            articfactory_adress + file_name,
-            auth=('jenkins', 'jenkins123!'))
-        if response:
-            if response.json():
-                return response.json()
-    except ValueError:
-        return
-
-
 def main():
     raw_files = get_list_of_files()
     if raw_files:
@@ -95,14 +54,14 @@ def main():
             if loaded_json is None:
                 add_log(
                     file_name + " Couldn't parse  into a JSON file, might be empty json. moving to the next file...")
-                increment()
+                report_fail()
                 continue
 
             # Extract the right action from the JSON file
             actions = extract_required_actions(loaded_json)
             if actions is None or len(actions) <= 0:
                 add_log(file_name + " Didn't get any action to check - actions list might be empty or nil")
-                increment()
+                report_fail()
                 continue
 
             # Iterates over the actions and validate the right modules
@@ -111,14 +70,14 @@ def main():
                 json_file_object = parse_json_file(loaded_json, action)
                 if json_file_object is None:
                     add_log(file_name + " Couldn't parse the JSON into an object - moving to the next file...")
-                    increment()
+                    report_fail()
                     continue
 
                 # Extract an Athena query from the object
                 query = create_query(json_file_object, action)
                 if query is None:
                     add_log(file_name + " Couldn't extract any query - moving to the next action or file")
-                    increment()
+                    report_fail()
                     continue
 
                 # Scan Athena using a connector and the extracted query
@@ -126,7 +85,7 @@ def main():
                 if results.empty:
                     add_log(file_name + " Couldn't query from athena or got an empty results, moving to next "
                                         "action or file...")
-                    increment()
+                    report_fail()
                     continue
 
                 # Parse the results into an object
@@ -134,7 +93,7 @@ def main():
                 if athena_results_object is None:
                     add_log(file_name + " Couldn't parse athena DB results into an object, moving to the next action "
                                         "or file...")
-                    increment()
+                    report_fail()
                     continue
 
                 # Compare the JSON and Athena results
@@ -144,7 +103,7 @@ def main():
                     add_log(file_name + " With " + action + " Has Failed")
                     add_log(file_name + " Expected: " + str(json_file_object))
                     add_log(file_name + " Actual    " + str(athena_results_object))
-                    increment()
+                    report_fail()
 
         logs.append(str(tests_failed) + "/" + str(len(raw_files)) + " Has failed")
 

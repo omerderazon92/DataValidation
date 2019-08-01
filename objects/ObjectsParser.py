@@ -1,5 +1,8 @@
-from QueriesFactory import QuestionnaireQueryKeys, AssessmentQueryKeys, WatchDataQueryKeys, ActionTypes
-from QuestionnaireReportResults import QuestionnaireReportResults, AssessmentReportResults, AssessmentDataValidation
+from objects.Objects import QuestionnaireReportResults, AssessmentReportResults, AssessmentDataValidation
+from queries.AssessmentQueriesFactory import AssessmentQueryKeys
+from queries.QueriesManager import ActionTypes
+from queries.QuestionnaireQueriesFactory import QuestionnaireQueryKeys
+from queries.WatchDataQueryFactory import WatchDataQueryKeys
 
 
 def parse_json_file(json_file, action):
