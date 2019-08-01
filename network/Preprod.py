@@ -3,7 +3,8 @@ import requests
 from pyathenajdbc import connect
 import re
 
-articfactory_adress = 'http://aa-artifactory.intel.com:8081/artifactory/health-snapshot-local/com/intel/aa/validation_files/'
+articfactory_base_url = 'http://aa-artifactory.intel.com:8081/artifactory/health-snapshot-local/com/intel/aa/validation_files/'
+env_param = 'kclprep'
 
 
 def scan_athena(query):
@@ -16,7 +17,7 @@ def scan_athena(query):
 
 def get_list_of_files():
     files = []
-    response = requests.get(articfactory_adress, auth=('jenkins', 'jenkins123!'))
+    response = requests.get(articfactory_base_url, auth=('jenkins', 'jenkins123!'))
     if response:
         response_content = str(response.content)
         if response_content:
@@ -28,7 +29,7 @@ def get_list_of_files():
 def download_file(file_name):
     try:
         response = requests.get(
-            articfactory_adress + file_name,
+            articfactory_base_url + file_name,
             auth=('jenkins', 'jenkins123!'))
         if response:
             if response.json():
