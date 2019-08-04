@@ -25,7 +25,7 @@ def parse_json_file(json_file, action):
             answers = json_file[QuestionnaireQueryKeys.ANSWER.value]
 
             for index in range(0, len(answers)):
-                questionnaire_object.questions_answers.append(answers[str(index)])
+                questionnaire_object.answers.append(answers[str(index)])
 
             return questionnaire_object
 
@@ -93,7 +93,7 @@ def parse_athena_results(results, action):
             answers = results[QuestionnaireQueryKeys.ANSWER.value]
 
             for index in range(0, answers.size):
-                questionnaire_object.questions_answers.append(answers[index])
+                questionnaire_object.answers.append(answers[index])
 
             return questionnaire_object
 

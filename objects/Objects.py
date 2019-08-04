@@ -7,7 +7,7 @@ class QuestionnaireReportResults(object):
         self.questionnaire_timestamp_start = questionnaire_timestamp_start
         self.questionnaire_timestamp_end = questionnaire_timestamp_end
         self.status = status
-        self.questions_answers = []
+        self.answers = []
         self.hour = hour
         self.minute = minute
 
@@ -17,8 +17,8 @@ class QuestionnaireReportResults(object):
     def __repr__(self):
         meta_data = self.user_name + " " + self.questionnaire_name
 
-        if len(self.questions_answers) > 0:
-            meta_data = meta_data + " Answers: " + str(self.questions_answers)
+        if len(self.answers) > 0:
+            meta_data = meta_data + " Answers: " + str(self.answers)
         if self.status is not None:
             meta_data = meta_data + " Status: " + self.status
         if self.hour is not None and self.minute is not None:
@@ -76,3 +76,12 @@ class DiaryReportResults(object):
 
     def __hash__(self) -> int:
         return super().__hash__()
+
+    def __repr__(self):
+        meta_data = self.user_name + " " + self.diary_id
+
+        if len(self.answers) > 0:
+            meta_data = meta_data + " Answers: " + str(self.answers)
+        if self.status is not None:
+            meta_data = meta_data + " Status: " + self.status
+        return meta_data

@@ -1,12 +1,9 @@
-from datetime import date
-
-from network.Preprod import get_list_of_files, download_file, scan_athena
+from network.NetManager import get_list_of_files, download_file, scan_athena
 from objects.ObjectsParser import parse_json_file, parse_athena_results
 from queries.QueriesManager import ActionTypes, create_query, extract_required_actions
 
 logs = []
 tests_failed = 0
-date = date.today()
 
 
 def add_log(log):
@@ -20,12 +17,12 @@ def report_fail():
 
 
 def compare_objects_with_action(action, json_file_object, athena_results_object):
-    if action == ActionTypes.QUESTIONNAIRE_REPORT.name:
-        if len(json_file_object.questions_answers) != len(athena_results_object.questions_answers):
+    if action == ActionTypes.QUESTIONNAIRE_REPORT.name or action == ActionTypes.DIARY_REPORT.name:
+        if len(json_file_object.answers) != len(athena_results_object.answers):
             return False
         else:
-            for index in range(0, len(athena_results_object.questions_answers)):
-                if athena_results_object.questions_answers[index] != json_file_object.questions_answers[index]:
+            for index in range(0, len(athena_results_object.answers)):
+                if athena_results_object.answers[index] != json_file_object.answers[index]:
                     return False
             if json_file_object.status != athena_results_object.status:
                 return False
@@ -39,18 +36,9 @@ def compare_objects_with_action(action, json_file_object, athena_results_object)
             return False
         return True
     if action == ActionTypes.GYRO_DATA.name:
-        if athena_results_object.actual / athena_results_object.expected < 0.95:
+        gyro_treshold =  0.95
+        if athena_results_object.actual / athena_results_object.expected < gyro_treshold:
             return False
-        return True
-    if action == ActionTypes.DIARY_REPORT.name:
-        if len(json_file_object.answers) != len(athena_results_object.answers):
-            return False
-        else:
-            for index in range(0, len(athena_results_object.answers)):
-                if athena_results_object.answers[index] != json_file_object.answers[index]:
-                    return False
-            if json_file_object.status != athena_results_object.status:
-                return False
         return True
     pass
 

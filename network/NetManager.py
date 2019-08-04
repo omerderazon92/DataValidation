@@ -4,7 +4,6 @@ from pyathenajdbc import connect
 import re
 
 articfactory_base_url = 'http://aa-artifactory.intel.com:8081/artifactory/health-snapshot-local/com/intel/aa/validation_files/'
-env_param = 'kclprep'
 
 
 def scan_athena(query):
