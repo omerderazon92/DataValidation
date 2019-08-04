@@ -12,7 +12,7 @@ class DiaryQueryKeys(Enum):
     ACTIONS = "actions"
 
 
-basicDiaryReportQuery = Template("""SELECT * FROM "kclprep"."diary_report" 
+basicDiaryReportQuery = Template("""SELECT * FROM "$env"."diary_report" 
 where user_name = '$user_name'
 and diary_id = '$diary_id'
 and timestamp '$timestamp_start' + interval '20' second > timestamp_start

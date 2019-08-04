@@ -1,9 +1,11 @@
-from network.NetManager import get_list_of_files, download_file, scan_athena
+from network.NetManager import download_file, get_list_of_files, scan_athena
 from objects.ObjectsParser import parse_json_file, parse_athena_results
 from queries.QueriesManager import ActionTypes, create_query, extract_required_actions
+import sys
 
 logs = []
 tests_failed = 0
+env = sys.argv[1]
 
 
 def add_log(log):
@@ -72,14 +74,14 @@ def main():
                     continue
 
                 # Extract an Athena query from the object
-                query = create_query(json_file_object, action)
+                query = create_query(json_file_object, action, env)
                 if query is None:
                     add_log(file_name + " Couldn't extract any query - moving to the next action or file")
                     report_fail()
                     continue
 
                 # Scan Athena using a connector and the extracted query
-                results = scan_athena(query)
+                results = scan_athena(query, env)
                 if results.empty:
                     add_log(file_name + " Couldn't query from athena or got an empty results, moving to next "
                                         "action or file...")
@@ -113,4 +115,5 @@ def main():
 
 
 if __name__ == '__main__':
+    print(env)
     main()

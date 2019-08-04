@@ -22,30 +22,34 @@ def extract_required_actions(loaded_json):
         return
 
 
-def create_query(object, action):
+def create_query(object, action, env):
     try:
         if action == ActionTypes.QUESTIONNAIRE_REPORT.name:
             return basicQuestionnaireReportSqlQuery.substitute(user_name=object.user_name,
                                                                questionnaire_name=object.questionnaire_name,
                                                                questionnaire_timestamp_start=object.questionnaire_timestamp_start,
-                                                               questionnaire_timestamp_end=object.questionnaire_timestamp_end)
+                                                               questionnaire_timestamp_end=object.questionnaire_timestamp_end,
+                                                               env=env)
         if action == ActionTypes.QUESTIONNAIRE_SCHEDULE.name:
             return basicQuestionnaireScheduleQuery.substitute(user_name=object.user_name,
                                                               questionnaire_name=object.questionnaire_name,
-                                                              )
+                                                              env=env)
         if action == ActionTypes.ASSESSMENT_REPORT.name:
             return basicAssessmentReportQuery.substitute(user_name=object.user_name,
                                                          assessment_name=object.assessment_name,
                                                          assessment_start=object.assessment_start,
-                                                         assessment_end=object.assessment_end)
+                                                         assessment_end=object.assessment_end,
+                                                         env=env)
 
         if action == ActionTypes.GYRO_DATA.name:
             return basicGyroQuery.substitute(user_name=object.user_name,
-                                             assessment_end=object.assessment_end)
+                                             assessment_end=object.assessment_end,
+                                             env=env)
 
         if action == ActionTypes.DIARY_REPORT.name:
             return basicDiaryReportQuery.substitute(user_name=object.user_name,
                                                     diary_id=object.diary_id,
-                                                    timestamp_start=object.timestamp_start)
+                                                    timestamp_start=object.timestamp_start,
+                                                    env=env)
     except KeyError or ValueError:
         return

@@ -13,7 +13,7 @@ class AssessmentQueryKeys(Enum):
     ACTIONS = 'actions'
 
 
-basicAssessmentReportQuery = Template("""SELECT * FROM "kclprep"."assessments_steps" 
+basicAssessmentReportQuery = Template("""SELECT * FROM "$env"."assessments_steps" 
 where user_name  = '$user_name'
 and assessment_name = '$assessment_name'
 and timestamp '$assessment_start' > assessment_start - interval '30' second

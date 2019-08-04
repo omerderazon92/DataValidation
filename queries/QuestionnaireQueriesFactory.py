@@ -14,7 +14,7 @@ class QuestionnaireQueryKeys(Enum):
     ACTIONS = "actions"
 
 
-basicQuestionnaireReportSqlQuery = Template("""SELECT * FROM "kcl"."questionnaire_report" 
+basicQuestionnaireReportSqlQuery = Template("""SELECT * FROM "$env"."questionnaire_report" 
 where user_name = '$user_name'
 and questionnaire_name = '$questionnaire_name'
 and timestamp '$questionnaire_timestamp_start' > questionnaire_timestamp_start - interval '15' second
@@ -22,7 +22,7 @@ and timestamp '$questionnaire_timestamp_start'  < questionnaire_timestamp_end - 
 order by question_order 
 limit 100;""")
 
-basicQuestionnaireScheduleQuery = Template("""SELECT * FROM "kcl"."questionnaire_schedule" 
+basicQuestionnaireScheduleQuery = Template("""SELECT * FROM "$env"."questionnaire_schedule" 
 where user_name = '$user_name'
 and questionnaire_name = '$questionnaire_name'
 limit 1;""")
