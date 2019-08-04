@@ -57,6 +57,22 @@ class AssessmentDataValidation(object):
         return super.__hash__()
 
     def __repr__(self):
-        meta_data = "Actual samples rate: " + str(self.actual) + "  expected samples rate: " + str(self.expected) + " which " \
-             "means: " + str(self.actual / self.expected)
+        meta_data = "Actual samples rate: " + str(self.actual) + "  expected samples rate: " + str(
+            self.expected) + " which " \
+                             "means: " + str(self.actual / self.expected)
         return meta_data
+
+
+class DiaryReportResults(object):
+    def __init__(self, user_name, diary_id, actions="", timestamp_start="",
+                 timestamp_end="", status=""):
+        self.user_name = user_name
+        self.diary_id = diary_id
+        self.actions = actions
+        self.timestamp_start = timestamp_start
+        self.timestamp_end = timestamp_end
+        self.status = status
+        self.answers = []
+
+    def __hash__(self) -> int:
+        return super().__hash__()

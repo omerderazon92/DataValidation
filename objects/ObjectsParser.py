@@ -1,5 +1,7 @@
-from objects.Objects import QuestionnaireReportResults, AssessmentReportResults, AssessmentDataValidation
+from objects.Objects import QuestionnaireReportResults, AssessmentReportResults, AssessmentDataValidation, \
+    DiaryReportResults
 from queries.AssessmentQueriesFactory import AssessmentQueryKeys
+from queries.DiaryQueriesFactory import DiaryQueryKeys
 from queries.QueriesManager import ActionTypes
 from queries.QuestionnaireQueriesFactory import QuestionnaireQueryKeys
 from queries.WatchDataQueryFactory import WatchDataQueryKeys
@@ -51,6 +53,22 @@ def parse_json_file(json_file, action):
                                                         None,  # Triggered_ETS
                                                         json_file[AssessmentQueryKeys.STATUS.value])
             return assessment_object
+
+        if action == ActionTypes.DIARY_REPORT.name:
+            diary_object = DiaryReportResults(json_file[DiaryQueryKeys.USER_NAME.value],
+                                              json_file[DiaryQueryKeys.DIARY_ID.value],
+                                              None,
+                                              json_file[DiaryQueryKeys.DIARY_TIMESTAMP_START.value],
+                                              json_file[DiaryQueryKeys.DIARY_TIMESTAMP_END.value],
+                                              json_file[DiaryQueryKeys.STATUS.value])
+
+            answers = json_file[DiaryQueryKeys.ANSWER.value]
+
+            for index in range(0, len(answers)):
+                diary_object.answers.append(answers[str(index)])
+
+            return diary_object
+
     except KeyError or ValueError:
         return
 
@@ -108,6 +126,21 @@ def parse_athena_results(results, action):
                                                    results[WatchDataQueryKeys.ACTUAL.value][0],
                                                    results[WatchDataQueryKeys.EXPECTED.value][0])
             return gyro_object
+
+        if action == ActionTypes.DIARY_REPORT.name:
+            diary_object = DiaryReportResults(results[DiaryQueryKeys.USER_NAME.value][0],
+                                              results[DiaryQueryKeys.DIARY_ID.value][0],
+                                              None,
+                                              results[DiaryQueryKeys.DIARY_TIMESTAMP_START.value][0],
+                                              results[DiaryQueryKeys.DIARY_TIMESTAMP_END.value][0],
+                                              results[DiaryQueryKeys.STATUS.value][0])
+
+            answers = results[DiaryQueryKeys.ANSWER.value]
+
+            for index in range(0, len(answers)):
+                diary_object.answers.append(answers[index])
+
+            return diary_object
 
     except KeyError or ValueError:
         return

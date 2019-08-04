@@ -3,6 +3,7 @@ from enum import Enum
 from queries.AssessmentQueriesFactory import basicAssessmentReportQuery
 from queries.QuestionnaireQueriesFactory import basicQuestionnaireReportSqlQuery, basicQuestionnaireScheduleQuery, \
     QuestionnaireQueryKeys
+from queries.DiaryQueriesFactory import basicDiaryReportQuery
 from queries.WatchDataQueryFactory import basicGyroQuery
 
 
@@ -11,6 +12,7 @@ class ActionTypes(Enum):
     QUESTIONNAIRE_SCHEDULE = "1"
     ASSESSMENT_REPORT = "2"
     GYRO_DATA = "3"
+    DIARY_REPORT = "4"
 
 
 def extract_required_actions(loaded_json):
@@ -40,5 +42,10 @@ def create_query(object, action):
         if action == ActionTypes.GYRO_DATA.name:
             return basicGyroQuery.substitute(user_name=object.user_name,
                                              assessment_end=object.assessment_end)
+
+        if action == ActionTypes.DIARY_REPORT.name:
+            return basicDiaryReportQuery.substitute(user_name=object.user_name,
+                                                    diary_id=object.diary_id,
+                                                    timestamp_start=object.timestamp_start)
     except KeyError or ValueError:
         return
