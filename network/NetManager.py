@@ -7,7 +7,7 @@ import pandas as pd
 import requests
 from pyathenajdbc import connect
 
-base_url = 'http://aa-artifactory.intel.com:8081/artifactory/health-snapshot-local/com/intel/aa/validation_files/jobUploadOmer7/'
+base_url = 'http://aa-artifactory.intel.com:8081/artifactory/health-snapshot-local/com/intel/aa/BDD_DATA_VALIDATION_TESTS/'
 target_url = ""
 
 
