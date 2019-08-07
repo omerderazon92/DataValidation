@@ -1,11 +1,14 @@
-from network.NetManager import download_file, get_list_of_files, scan_athena
+from network.NetManager import download_file, get_list_of_zips, scan_athena, define_env
 from objects.ObjectsParser import parse_json_file, parse_athena_results
 from queries.QueriesManager import ActionTypes, create_query, extract_required_actions
 import sys
+import json
 
 logs = []
 tests_failed = 0
 env = sys.argv[1]
+FILE_NAME = 1
+JSON = 0
 
 
 def add_log(log):
@@ -38,7 +41,7 @@ def compare_objects_with_action(action, json_file_object, athena_results_object)
             return False
         return True
     if action == ActionTypes.GYRO_DATA.name:
-        gyro_treshold =  0.95
+        gyro_treshold = 0.95
         if athena_results_object.actual / athena_results_object.expected < gyro_treshold:
             return False
         return True
@@ -46,74 +49,82 @@ def compare_objects_with_action(action, json_file_object, athena_results_object)
 
 
 def main():
-    raw_files = get_list_of_files()
-    if raw_files:
-        for file_name in raw_files:
-            # Download the file from the artifactory
-            loaded_json = download_file(file_name)
-            if loaded_json is None:
-                add_log(
-                    file_name + " Couldn't parse  into a JSON file, might be empty json. moving to the next file...")
-                report_fail()
-                continue
-
-            # Extract the right action from the JSON file
-            actions = extract_required_actions(loaded_json)
-            if actions is None or len(actions) <= 0:
-                add_log(file_name + " Didn't get any action to check - actions list might be empty or nil")
-                report_fail()
-                continue
-
-            # Iterates over the actions and validate the right modules
-            for action in actions:
-                # Parse the JSON file into an object
-                json_file_object = parse_json_file(loaded_json, action)
-                if json_file_object is None:
-                    add_log(file_name + " Couldn't parse the JSON into an object - moving to the next file...")
+    amount_of_files = 0
+    define_env(env)
+    zips = get_list_of_zips()
+    if zips:
+        for zip in zips:
+            # Download the file from the artifactory, list of 1. json 2. file
+            jsons_list = download_file(zip)
+            for json_file in jsons_list:
+                amount_of_files = amount_of_files + 1
+                if json_file is None or json_file[JSON] is None or json_file[FILE_NAME] is None:
+                    add_log(
+                        json_file[FILE_NAME] + " Couldn't parse  into a JSON file, might be empty json. moving to the "
+                                               "next file...")
                     report_fail()
                     continue
 
-                # Extract an Athena query from the object
-                query = create_query(json_file_object, action, env)
-                if query is None:
-                    add_log(file_name + " Couldn't extract any query - moving to the next action or file")
+                # Extract the right action from the JSON file
+                actions = extract_required_actions(json.loads(json_file[JSON]))
+                if actions is None or len(actions) <= 0:
+                    add_log(json_file[FILE_NAME] + " Didn't get any action to check - actions list might be empty or "
+                                                   "nil")
                     report_fail()
                     continue
 
-                # Scan Athena using a connector and the extracted query
-                results = scan_athena(query, env)
-                if results.empty:
-                    add_log(file_name + " Couldn't query from athena or got an empty results, moving to next "
-                                        "action or file...")
-                    report_fail()
-                    continue
+                # Iterates over the actions and validate the right modules
+                for action in actions:
+                    # Parse the JSON file into an object
+                    json_file_object = parse_json_file(json.loads(json_file[JSON]), action)
+                    if json_file_object is None:
+                        add_log(json_file[FILE_NAME] + " Couldn't parse the JSON into an object - moving to the next "
+                                                       "file...")
+                        report_fail()
+                        continue
 
-                # Parse the results into an object
-                athena_results_object = parse_athena_results(results, action)
-                if athena_results_object is None:
-                    add_log(file_name + " Couldn't parse athena DB results into an object, moving to the next action "
-                                        "or file...")
-                    report_fail()
-                    continue
+                    # Extract an Athena query from the object
+                    query = create_query(json_file_object, action, env)
+                    if query is None:
+                        add_log(
+                            json_file[FILE_NAME] + " Couldn't extract any query - moving to the next action or file")
+                        report_fail()
+                        continue
+                    # Scan Athena using a connector and the extracted query
+                    results = scan_athena(query, env)
+                    if results.empty:
+                        add_log(json_file[FILE_NAME] + " Couldn't query from athena or got an empty results, moving to "
+                                                       "next "
+                                                       "action or file...")
+                        report_fail()
+                        continue
+                    # Parse the results into an object
+                    athena_results_object = parse_athena_results(results, action)
+                    if athena_results_object is None:
+                        add_log(json_file[FILE_NAME] + " Couldn't parse athena DB results into an object, moving to "
+                                                       "the next action "
+                                                       "or file...")
+                        report_fail()
+                        continue
 
-                # Compare the JSON and Athena results
-                if compare_objects_with_action(action, json_file_object, athena_results_object):
-                    add_log(file_name + " With " + action + " checking Has Passed successfully")
-                else:
-                    add_log(file_name + " With " + action + " Has Failed")
-                    add_log(file_name + " Expected: " + str(json_file_object))
-                    add_log(file_name + " Actual    " + str(athena_results_object))
-                    report_fail()
+                    # Compare the JSON and Athena results
+                    if compare_objects_with_action(action, json_file_object, athena_results_object):
+                        add_log(json_file[FILE_NAME] + " With " + action + " checking Has Passed successfully")
+                    else:
+                        add_log(json_file[FILE_NAME] + " With " + action + " Has Failed")
+                        add_log(json_file[FILE_NAME] + " Expected: " + str(json_file_object))
+                        add_log(json_file[FILE_NAME] + " Actual    " + str(athena_results_object))
+                        report_fail()
 
-        logs.append(str(tests_failed) + "/" + str(len(raw_files)) + " Has failed")
+        logs.append(str(tests_failed) + "/" + str(amount_of_files) + " Has failed")
 
     else:
-        add_log("Couldn't get any relevant JSON files to validate - aborting process")
+        add_log("Couldn't get any relevant JSON Zips files to validate - aborting process")
 
     print("\n".join(logs))
     pass
 
 
 if __name__ == '__main__':
-    print(env)
+    print("Running on " + env)
     main()
