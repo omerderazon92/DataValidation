@@ -6,9 +6,10 @@ from zipfile import ZipFile
 import pandas as pd
 import requests
 from pyathenajdbc import connect
+from datetime import date, timedelta
 
-base_url = 'http://aa-artifactory.intel.com:8081/artifactory/health-snapshot-local/com/intel/aa/BDD_DATA_VALIDATION_TESTS/'
-target_url = ""
+base_url = 'http://aa-artifactory.intel.com:8081/artifactory/health-snapshot-local/com/intel/aa' \
+           '/BDD_DATA_VALIDATION_TESTS/'
 
 
 class Env(Enum):
@@ -16,12 +17,17 @@ class Env(Enum):
     KCL_TEST = "test"
 
 
-def define_env(env):
-    global target_url
+def define_url(env):
+    global base_url
     if env == Env.KCL_TEST.value:
-        target_url = base_url + "Test/"
+        base_url = base_url + "Test/"
     elif env == Env.KCL_PREP.value:
-        target_url = base_url + "Preprod/"
+        base_url = base_url + "Preprod/"
+
+    yesterday = date.today()  # - timedelta(days=1)
+    base_url = base_url + str(yesterday.month - 1) + "/"
+    base_url = base_url + str(yesterday.day) + "/"
+    print(base_url)
 
 
 def scan_athena(query, env):
@@ -41,7 +47,7 @@ def scan_athena(query, env):
 
 def get_list_of_zips():
     files = []
-    response = requests.get(target_url, auth=('jenkins', 'jenkins123!'))
+    response = requests.get(base_url, auth=('jenkins', 'jenkins123!'))
     if response:
         response_content = str(response.content)
         if response_content:
@@ -65,7 +71,7 @@ def extract_json_from_zip(content):
 def download_file(file_name):
     try:
         response = requests.get(
-            target_url + file_name,
+            base_url + file_name,
             auth=('jenkins', 'jenkins123!'))
         if response:
             return extract_json_from_zip(response.content)

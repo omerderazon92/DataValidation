@@ -1,4 +1,4 @@
-from network.NetManager import download_file, get_list_of_zips, scan_athena, define_env
+from network.NetManager import download_file, get_list_of_zips, scan_athena, define_url
 from objects.ObjectsParser import parse_json_file, parse_athena_results
 from queries.QueriesManager import ActionTypes, create_query, extract_required_actions
 import sys
@@ -6,9 +6,10 @@ import json
 
 logs = []
 tests_failed = 0
-env = sys.argv[1]
+# env = sys.argv[1]
 FILE_NAME = 1
 JSON = 0
+env = "test"
 
 
 def add_log(log):
@@ -50,7 +51,7 @@ def compare_objects_with_action(action, json_file_object, athena_results_object)
 
 def main():
     amount_of_files = 0
-    define_env(env)
+    define_url(env)
     zips = get_list_of_zips()
     if zips:
         for zip in zips:
@@ -60,7 +61,7 @@ def main():
                 amount_of_files = amount_of_files + 1
                 if json_file is None or json_file[JSON] is None or json_file[FILE_NAME] is None:
                     add_log(
-                        json_file[FILE_NAME] + " Couldn't parse  into a JSON file, might be empty json. moving to the "
+                        json_file[FILE_NAME] + " Couldn't parse  into a JSON file, might be an empty json. moving to the "
                                                "next file...")
                     report_fail()
                     continue
@@ -93,7 +94,7 @@ def main():
                     # Scan Athena using a connector and the extracted query
                     results = scan_athena(query, env)
                     if results.empty:
-                        add_log(json_file[FILE_NAME] + " Couldn't query from athena or got an empty results, moving to "
+                        add_log(json_file[FILE_NAME] + " Couldn't query from athena or got an empty respone, moving to "
                                                        "next "
                                                        "action or file...")
                         report_fail()
