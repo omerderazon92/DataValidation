@@ -6,10 +6,9 @@ import json
 
 logs = []
 tests_failed = 0
-# env = sys.argv[1]
+env = sys.argv[1]
 FILE_NAME = 1
 JSON = 0
-env = "test"
 delimiter = "----------------" \
             "------------------" \
             "----------------------" \
