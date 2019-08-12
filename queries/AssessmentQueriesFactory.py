@@ -16,7 +16,7 @@ class AssessmentQueryKeys(Enum):
 basicAssessmentReportQuery = Template("""SELECT * FROM "$env"."assessments_steps" 
 where user_name  = '$user_name'
 and assessment_name = '$assessment_name'
-and timestamp '$assessment_start' > assessment_start - interval '30' second
-and timestamp '$assessment_start' < assessment_end - interval '30' second
+and timestamp '$assessment_start' > assessment_start - interval '1' minute
+and timestamp '$assessment_end' < assessment_end + interval '1' minute
 order by assessment_start desc
 limit 100;;""")

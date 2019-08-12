@@ -15,7 +15,7 @@ class DiaryQueryKeys(Enum):
 basicDiaryReportQuery = Template("""SELECT * FROM "$env"."diary_report" 
 where user_name = '$user_name'
 and diary_id = '$diary_id'
-and timestamp '$timestamp_start' + interval '20' second > timestamp_start
-and timestamp '$timestamp_start' + interval '20' second < timestamp_end
+and timestamp '$timestamp_start'  > timestamp_start - interval '1' minute
+and timestamp '$timestamp_start' < timestamp_start +1 interval '1' minute
 order by question_order desc
 limit 100;""")

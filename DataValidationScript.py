@@ -10,6 +10,12 @@ tests_failed = 0
 FILE_NAME = 1
 JSON = 0
 env = "test"
+delimiter = "----------------" \
+            "------------------" \
+            "----------------------" \
+            "---------------------------" \
+            "-------------------------------" \
+            "------------------------------------ "
 
 
 def add_log(log):
@@ -49,15 +55,26 @@ def compare_objects_with_action(action, json_file_object, athena_results_object)
     pass
 
 
+def write_log_file(logs):
+    logs_file = "\n".join(logs)
+    text_file = open("OutputOmer.txt", "w")
+    text_file.write(logs_file)
+    text_file.close()
+    print(logs_file)
+    pass
+
+
 def main():
     amount_of_files = 0
     define_url(env)
     zips = get_list_of_zips()
     if zips:
         for zip in zips:
+            add_log("Switched to " + zip)
             # Download the file from the artifactory, list of 1. json 2. file
             jsons_list = download_file(zip)
             for json_file in jsons_list:
+                add_log(delimiter)
                 amount_of_files = amount_of_files + 1
                 if json_file is None or json_file[JSON] is None or json_file[FILE_NAME] is None:
                     add_log(
@@ -118,11 +135,10 @@ def main():
                         report_fail()
 
         logs.append(str(tests_failed) + "/" + str(amount_of_files) + " Has failed")
-
     else:
         add_log("Couldn't get any relevant JSON Zips files to validate - aborting process")
 
-    print("\n".join(logs))
+    write_log_file(logs)
     pass
 
 
