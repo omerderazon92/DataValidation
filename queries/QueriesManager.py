@@ -50,6 +50,7 @@ def create_query(object, action, env):
             return basicDiaryReportQuery.substitute(user_name=object.user_name,
                                                     diary_id=object.diary_id,
                                                     timestamp_start=object.timestamp_start,
+                                                    timestamp_end=object.timestamp_end,
                                                     env=env)
     except KeyError or ValueError:
         return
