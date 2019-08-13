@@ -24,7 +24,7 @@ def define_url(env):
     elif env == Env.KCL_PREP.value:
         base_url = base_url + "Preprod/"
 
-    yesterday = date.today()  # - timedelta(days=1)
+    yesterday = date.today() - timedelta(days=1)
     base_url = base_url + str(yesterday.month - 1) + "/"
     base_url = base_url + str(yesterday.day) + "/"
     print(base_url)

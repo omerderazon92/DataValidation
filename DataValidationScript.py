@@ -69,6 +69,7 @@ def main():
     zips = get_list_of_zips()
     if zips:
         for zip in zips:
+            add_log(delimiter)
             add_log("Switched to " + zip)
             # Download the file from the artifactory, list of 1. json 2. file
             jsons_list = download_file(zip)
@@ -129,8 +130,8 @@ def main():
                         add_log(json_file[FILE_NAME] + " With " + action + " checking Has Passed successfully")
                     else:
                         add_log(json_file[FILE_NAME] + " With " + action + " Has Failed")
-                        add_log(json_file[FILE_NAME] + " Expected: " + str(json_file_object))
-                        add_log(json_file[FILE_NAME] + " Actual    " + str(athena_results_object))
+                        add_log(json_file[FILE_NAME] + " Expected: (Test Results) " + str(json_file_object))
+                        add_log(json_file[FILE_NAME] + " Actual: (Server Results) " + str(athena_results_object))
                         report_fail()
 
         logs.append(str(tests_failed) + "/" + str(amount_of_files) + " Has failed")
