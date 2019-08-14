@@ -5,6 +5,7 @@ from queries.QuestionnaireQueriesFactory import basicQuestionnaireReportSqlQuery
     QuestionnaireQueryKeys
 from queries.DiaryQueriesFactory import basicDiaryReportQuery
 from queries.WatchDataQueryFactory import basicGyroQuery
+from queries.MedicationQueriesFactory import basicMedicationScheduleQuery
 
 
 class ActionTypes(Enum):
@@ -13,6 +14,7 @@ class ActionTypes(Enum):
     ASSESSMENT_REPORT = "2"
     GYRO_DATA = "3"
     DIARY_REPORT = "4"
+    MEDICATION_SCHEDULE = "5"
 
 
 def extract_required_actions(loaded_json):
@@ -52,5 +54,13 @@ def create_query(object, action, env):
                                                     timestamp_start=object.timestamp_start,
                                                     timestamp_end=object.timestamp_end,
                                                     env=env)
+
+        if action == ActionTypes.MEDICATION_SCHEDULE.name:
+            return basicMedicationScheduleQuery.substitute(user_name=object.user_name,
+                                                           medication_name=object.medication_name,
+                                                           effective_start=object.effective_start,
+                                                           effective_end=object.effective_end,
+                                                           env=env)
+
     except KeyError or ValueError:
         return
