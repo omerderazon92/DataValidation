@@ -85,3 +85,18 @@ class DiaryReportResults(object):
         if self.status is not None:
             meta_data = meta_data + " Status: " + self.status
         return meta_data
+
+
+class MedicationReportResults(object):
+    def __init__(self, user_name, medication_name, actions="", effective_start="",
+                 effective_end="", status="", medication_taken_ts="", report_ts="", hour="", minute=""):
+        self.user_name = user_name
+        self.medication_name = medication_name
+        self.actions = actions
+        self.effective_start = effective_start
+        self.effective_end = effective_end
+        self.status = status
+        self.medication_taken_ts = medication_taken_ts
+        self.report_ts = report_ts
+        self.hour = hour
+        self.minute = minute
