@@ -108,6 +108,7 @@ def main():
                             json_file[FILE_NAME] + " Couldn't extract any query - moving to the next action or file")
                         report_fail()
                         continue
+
                     # Scan Athena using a connector and the extracted query
                     results = scan_athena(query, env)
                     if results.empty:
@@ -116,6 +117,7 @@ def main():
                                                        "action or file...")
                         report_fail()
                         continue
+
                     # Parse the results into an object
                     athena_results_object = parse_athena_results(results, action)
                     if athena_results_object is None:

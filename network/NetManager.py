@@ -21,11 +21,11 @@ class Env(Enum):
 def define_url(env):
     global base_url
     if env == Env.KCL_TEST.value:
-        base_url = base_url + "Test/"
+        base_url = base_url + "KCL/Test/"
     elif env == Env.KCL_PREP.value:
-        base_url = base_url + "Preprod/"
+        base_url = base_url + "KCL/Preprod/"
     elif env == Env.KCL_TEST.value:
-        base_url = base_url + "ShebaTest/"
+        base_url = base_url + "Sheba/ShebaTest/"
 
     yesterday = date.today() - timedelta(days=1)
     base_url = base_url + str(yesterday.month - 1) + "/"
