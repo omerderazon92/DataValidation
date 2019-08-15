@@ -56,7 +56,7 @@ def compare_objects_with_action(action, json_file_object, athena_results_object)
 
 def write_log_file(logs):
     logs_file = "\n".join(logs)
-    text_file = open("OutputOmer.txt", "w")
+    text_file = open("Logs.txt", "w")
     text_file.write(logs_file)
     text_file.close()
     print(logs_file)
