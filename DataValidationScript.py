@@ -1,5 +1,5 @@
 import json
-
+import sys
 from Comparator import compare_objects_with_action
 from network.NetManager import download_file, get_list_of_zips, scan_athena, define_url
 from objects.ObjectsParser import parse_json_file, parse_athena_results
@@ -7,7 +7,7 @@ from queries.QueriesManager import create_query, extract_required_actions
 
 logs = []
 tests_failed = 0
-env = "shebatest"
+env = sys.argv[1]
 FILE_NAME = 1
 JSON = 0
 delimiter = "----------------" \
