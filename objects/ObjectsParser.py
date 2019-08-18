@@ -1,10 +1,11 @@
 from objects.Objects import QuestionnaireReportResults, AssessmentReportResults, AssessmentDataValidation, \
-    DiaryReportResults
+    DiaryReportResults, MedicationReportResults
 from queries.AssessmentQueriesFactory import AssessmentQueryKeys
 from queries.DiaryQueriesFactory import DiaryQueryKeys
 from queries.QueriesManager import ActionTypes
 from queries.QuestionnaireQueriesFactory import QuestionnaireQueryKeys
 from queries.WatchDataQueryFactory import WatchDataQueryKeys
+from queries.MedicationQueriesFactory import MedicationQueryKeys
 
 
 def parse_json_file(json_file, action):
@@ -68,6 +69,19 @@ def parse_json_file(json_file, action):
                 diary_object.answers.append(answers[str(index)])
 
             return diary_object
+
+        if action == ActionTypes.MEDICATION_SCHEDULE.name:
+            medication_object = MedicationReportResults(json_file[MedicationQueryKeys.USER_NAME.value],
+                                                        json_file[MedicationQueryKeys.MEDICATION_NAME.value],
+                                                        None,
+                                                        json_file[MedicationQueryKeys.EFFECTIVE_START.value],
+                                                        json_file[MedicationQueryKeys.EFFECTIVE_END.value],
+                                                        None,
+                                                        None,
+                                                        None,
+                                                        json_file[MedicationQueryKeys.HOUR.value],
+                                                        json_file[MedicationQueryKeys.MINUTE.value])
+            return medication_object
 
     except KeyError or ValueError:
         return

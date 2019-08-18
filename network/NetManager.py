@@ -24,8 +24,8 @@ def define_url(env):
         base_url = base_url + "KCL/Test/"
     elif env == Env.KCL_PREP.value:
         base_url = base_url + "KCL/Preprod/"
-    elif env == Env.KCL_TEST.value:
-        base_url = base_url + "Sheba/ShebaTest/"
+    elif env == Env.SHEBA_TEST.value:
+        base_url = base_url + "Sheba/Test/"
 
     yesterday = date.today() - timedelta(days=1)
     base_url = base_url + str(yesterday.month - 1) + "/"

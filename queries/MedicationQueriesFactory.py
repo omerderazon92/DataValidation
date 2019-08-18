@@ -16,7 +16,7 @@ class MedicationQueryKeys(Enum):
 
 
 basicMedicationScheduleQuery = Template("""SELECT * FROM "$env"."medication_schedule" 
-where user_name = 'BDD_1565790313367_B089AC2D-1BE4-455C-B697-953F052A1508'
+where user_name = '$user_name'
 and medication_name = '$medication_name'
 and effective_end + interval '2' second > timestamp '$effective_end'
 and effective_end - interval '2' second < timestamp '$effective_end'
