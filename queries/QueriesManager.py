@@ -15,6 +15,7 @@ class ActionTypes(Enum):
     GYRO_DATA = "3"
     DIARY_REPORT = "4"
     MEDICATION_SCHEDULE = "5"
+    MEDICATION_REPORT = "6"
 
 
 def extract_required_actions(loaded_json):

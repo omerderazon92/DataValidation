@@ -97,7 +97,7 @@ def main():
                     # Parse the results into an object
                     athena_results_object = parse_athena_results(results, action)
                     if athena_results_object is None:
-                        add_log(json_file[FILE_NAME] + " Couldn't parse athena DB results into an object, moving to "
+                        add_log(json_file[FILE_NAME] + " Couldn't parse athena results into an object, moving to "
                                                        "the next action "
                                                        "or file...")
                         fail_increment()
