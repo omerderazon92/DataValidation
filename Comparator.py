@@ -29,4 +29,8 @@ def compare_objects_with_action(action, json_file_object, athena_results_object)
         if json_file_object.hour != athena_results_object.hour or json_file_object.minute != athena_results_object.minute:
             return False
         return True
+    if action == ActionTypes.MEDICATION_REPORT.name:
+        if json_file_object.medication_taken_ts != athena_results_object.medication_taken_ts:
+            return False
+        return True
     pass

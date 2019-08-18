@@ -5,7 +5,7 @@ from queries.QuestionnaireQueriesFactory import basicQuestionnaireReportSqlQuery
     QuestionnaireQueryKeys
 from queries.DiaryQueriesFactory import basicDiaryReportQuery
 from queries.WatchDataQueryFactory import basicGyroQuery
-from queries.MedicationQueriesFactory import basicMedicationScheduleQuery
+from queries.MedicationQueriesFactory import basicMedicationScheduleQuery, basicMedicationRerportQuery
 
 
 class ActionTypes(Enum):
@@ -62,6 +62,12 @@ def create_query(object, action, env):
                                                            effective_start=object.effective_start,
                                                            effective_end=object.effective_end,
                                                            env=env)
+
+        if action == ActionTypes.MEDICATION_REPORT.name:
+            return basicMedicationRerportQuery.substitute(user_name=object.user_name,
+                                                          medication_name=object.medication_name,
+                                                          report_ts=object.report_ts,
+                                                          env=env)
 
     except KeyError or ValueError:
         return
