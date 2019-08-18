@@ -21,11 +21,11 @@ class Env(Enum):
 def define_url(env):
     global base_url
     if env == Env.KCL_TEST.value:
-        base_url = base_url + "Test/"
+        base_url = base_url + "KCL/Test/"
     elif env == Env.KCL_PREP.value:
-        base_url = base_url + "Preprod/"
+        base_url = base_url + "KCL/Preprod/"
     elif env == Env.KCL_TEST.value:
-        base_url = base_url + "ShebaTest/"
+        base_url = base_url + "Sheba/ShebaTest/"
 
     yesterday = date.today() - timedelta(days=1)
     base_url = base_url + str(yesterday.month - 1) + "/"
@@ -56,12 +56,13 @@ def scan_athena(query, env):
 
 def get_list_of_zips():
     files = []
+    json_file_pattern = "[a-zA-Z]*-debug-[a-zA-Z]*_[a-zA-Z]*_jsonFiles_[0-9]*.zip<"
     response = requests.get(base_url, auth=('jenkins', 'jenkins123!'))
     if response:
         response_content = str(response.content)
         if response_content:
-            for match in re.finditer(">jsonFiles_[0-9]*.zip", response_content):
-                files.append(match.group(0).replace(">", ''))
+            for match in re.finditer(json_file_pattern, response_content):
+                files.append(match.group(0).replace("<", ''))
             return files
 
 
