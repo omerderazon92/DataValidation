@@ -25,4 +25,8 @@ def compare_objects_with_action(action, json_file_object, athena_results_object)
         if athena_results_object.actual / athena_results_object.expected < gyro_treshold:
             return False
         return True
+    if action == ActionTypes.MEDICATION_SCHEDULE.name:
+        if json_file_object.hour != athena_results_object.hour or json_file_object.minute != athena_results_object.minute:
+            return False
+        return True
     pass

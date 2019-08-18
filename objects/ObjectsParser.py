@@ -156,5 +156,18 @@ def parse_athena_results(results, action):
 
             return diary_object
 
+        if action == ActionTypes.MEDICATION_SCHEDULE.name:
+            medication_object = MedicationReportResults(results[MedicationQueryKeys.USER_NAME.value][0],
+                                                        results[MedicationQueryKeys.MEDICATION_NAME.value][0],
+                                                        None,
+                                                        results[MedicationQueryKeys.EFFECTIVE_START.value][0],
+                                                        results[MedicationQueryKeys.EFFECTIVE_END.value][0],
+                                                        None,
+                                                        None,
+                                                        None,
+                                                        results[MedicationQueryKeys.HOUR.value][0],
+                                                        results[MedicationQueryKeys.MINUTE.value][0])
+            return medication_object
+
     except KeyError or ValueError:
         return

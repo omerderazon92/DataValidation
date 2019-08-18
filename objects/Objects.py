@@ -100,3 +100,11 @@ class MedicationReportResults(object):
         self.report_ts = report_ts
         self.hour = hour
         self.minute = minute
+
+    def __repr__(self):
+        meta_data = "Medication name: " + self.medication_name + " Effective start: " + self.effective_start + " Effective end: " + self.effective_end + " Hour: " + self.hour + " Minute: " + self.minute
+        if self.status is not None:
+            meta_data = meta_data + " Status: " + self.status
+        if self.medication_taken_ts is not None:
+            meta_data = meta_data + " Medication taken ts: " + self.medication_taken_ts
+        return meta_data
