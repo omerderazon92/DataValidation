@@ -115,7 +115,6 @@ def main():
         logs.append(str(tests_failed) + "/" + str(amount_of_validations) + " Has failed")
     else:
         add_log("Couldn't get any relevant JSON Zips files to validate - aborting process")
-
     write_log_file(logs)
     pass
 
