@@ -3,7 +3,7 @@ import sys
 from Comparator import compare_objects_with_action
 from network.NetManager import download_file, get_list_of_zips, scan_athena, define_url
 from objects.ObjectsParser import parse_json_file, parse_athena_results
-from queries.QueriesManager import create_query, extract_required_actions
+from queries.QueriesManager import create_query, extract_required_actions, ActionTypes
 
 logs = []
 tests_failed = 0
@@ -64,6 +64,10 @@ def main():
 
                 # Iterates over the actions and validate the right modules
                 for action in actions:
+                    if action == ActionTypes.NO_ACTION.name:
+                        logs.append("There is no need to validate something")
+                        continue
+
                     amount_of_validations = amount_of_validations + 1
                     logs.append("Validating " + json_file[FILE_NAME] + " " + action + ":")
                     # Parse the JSON file into an object
