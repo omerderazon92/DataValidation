@@ -105,9 +105,9 @@ class MedicationReportResults(object):
         meta_data = "Medication name: " + self.medication_name
 
         if self. effective_start is not  None and self.effective_end is not None:
-            meta_data = "Effective start: " + self.effective_start + "Effective end: " + self.effective_end
+            meta_data = "Effective start: " + str(self.effective_start) + "Effective end: " + str(self.effective_end)
         if self. hour is not None and self.minute is not None:
-            meta_data = meta_data + "Hour: " + str(self.hour) + " Minute: " + str(self.minute)
+            meta_data = meta_data + " Hour: " + str(self.hour) + " Minute: " + str(self.minute)
         if self.status is not None:
             meta_data = meta_data + " Status: " + self.status
         if self.medication_taken_ts is not None:

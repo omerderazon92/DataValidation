@@ -16,6 +16,7 @@ delimiter = "----------------" \
             "---------------------------" \
             "-------------------------------" \
             "------------------------------------ "
+centered_title = "                                "
 
 
 def fail_increment():
@@ -39,7 +40,7 @@ def main():
     if zips:
         for zip in zips:
             logs.append(delimiter)
-            logs.append("Current Bundle: " + zip)
+            logs.append( centered_title + "Current Bundle: " + zip)
             # Download the file from the artifactory, list of 1. json 2. file
             jsons_list = download_file(zip)
             for json_file in jsons_list:
