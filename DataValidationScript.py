@@ -113,7 +113,7 @@ def main():
                         logs.append("Actual: (Server Results) " + str(athena_results_object))
                         fail_increment()
 
-        logs.append("\n" + str(tests_failed) + "/" + str(amount_of_validations) + " Validations have failed")
+        logs.insert(0,"\n" + str(tests_failed) + "/" + str(amount_of_validations) + " Validations have failed")
     else:
         logs.append("Couldn't get any relevant JSON Zips files to validate - aborting process")
     write_log_file(logs)

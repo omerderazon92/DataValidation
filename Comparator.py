@@ -30,7 +30,7 @@ def compare_objects_with_action(action, json_file_object, athena_results_object)
             return False
         return True
     if action == ActionTypes.MEDICATION_REPORT.name:
-        if json_file_object.medication_taken_ts != athena_results_object.medication_taken_ts or json_file_object.status != athena_results_object.status:
+        if str(json_file_object.medication_taken_ts) != str(athena_results_object.medication_taken_ts) or json_file_object.status != athena_results_object.status:
             return False
         return True
     pass
