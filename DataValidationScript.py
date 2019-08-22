@@ -64,12 +64,12 @@ def main():
 
                 # Iterates over the actions and validate the right modules
                 for action in actions:
+                    logs.append("Validating " + json_file[FILE_NAME] + " " + action + ":")
                     if action == ActionTypes.NO_ACTION.name:
-                        logs.append("There is no need to validate something")
+                        logs.append("There is no need for validation")
                         continue
 
                     amount_of_validations = amount_of_validations + 1
-                    logs.append("Validating " + json_file[FILE_NAME] + " " + action + ":")
                     # Parse the JSON file into an object
                     json_file_object = parse_json_file(json.loads(json_file[JSON]), action)
                     if json_file_object is None:
