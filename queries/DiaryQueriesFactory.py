@@ -17,5 +17,5 @@ where user_name = '$user_name'
 and diary_id = '$diary_id'
 and timestamp '$timestamp_start'  > timestamp_start - interval '5' minute
 and timestamp '$timestamp_end' < timestamp_end + interval '5' minute
-order by question_order desc
+order by question_order 
 limit 100;""")
