@@ -27,7 +27,7 @@ def define_url(env):
     elif env == Env.SHEBA_TEST.value:
         base_url = base_url + "Sheba/Test/"
 
-    today = date.today()
+    today = date.today() # - timedelta(days= 3)
     base_url = base_url + str(today.month - 1) + "/"
     base_url = base_url + str(today.day) + "/"
     print(base_url)
