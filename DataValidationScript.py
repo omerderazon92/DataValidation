@@ -105,10 +105,9 @@ def main():
                         continue
 
                     # Compare the JSON and Athena results
-                    if compare_objects_with_action(action, json_file_object, athena_results_object):
+                    if compare_objects_with_action(action, json_file_object, athena_results_object, logs):
                         logs.append("*Success*")
                     else:
-                        logs.append("*Failed*")
                         logs.append("Expected: (Test Results) " + str(json_file_object))
                         logs.append("Actual: (Server Results) " + str(athena_results_object))
                         fail_increment()
