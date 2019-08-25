@@ -91,7 +91,7 @@ def main():
                     if results.empty:
                         logs.append("Couldn't query from athena or got an empty respone, moving to "
                                     "next "
-                                    "action or file...")
+                                    "action or file...(Might be related to the pipeline")
                         fail_increment()
                         continue
 
