@@ -56,7 +56,7 @@ def scan_athena(query, env):
 
 def get_list_of_zips():
     files = []
-    json_file_pattern = "[a-zA-Z]*-debug-[a-zA-Z]*_[a-zA-Z]*_jsonFiles_[0-9]*.zip<"
+    json_file_pattern = "[a-zA-Z]*-debug-([a-zA-Z]|[0-9])*_[a-zA-Z]*_jsonFiles_[0-9]*.zip<"
     response = requests.get(base_url, auth=('jenkins', 'jenkins123!'))
     if response:
         response_content = str(response.content)
@@ -66,19 +66,19 @@ def get_list_of_zips():
             return files
 
 
-def extract_json_from_zip(content):
-    jsons_list = []
-    zipfile = ZipFile(BytesIO(content))
-    for f in zipfile.namelist():
-        json = zipfile.open(f)
-        string_json = str(json.read())
-        string_json = string_json[2:]
-        string_json = string_json[:len(string_json) - 1]
-        jsons_list.append((string_json.replace('\\n', ''), f))
-    return jsons_list
-
-
 def download_file(file_name):
+
+    def extract_json_from_zip(content):
+        jsons_list = []
+        zipfile = ZipFile(BytesIO(content))
+        for f in zipfile.namelist():
+            json = zipfile.open(f)
+            string_json = str(json.read())
+            string_json = string_json[2:]
+            string_json = string_json[:len(string_json) - 1]
+            jsons_list.append((string_json.replace('\\n', ''), f))
+        return jsons_list
+
     try:
         response = requests.get(
             base_url + file_name,
