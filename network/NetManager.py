@@ -15,7 +15,8 @@ base_url = 'http://aa-artifactory.intel.com:8081/artifactory/health-snapshot-loc
 class Env(Enum):
     KCL_PREP = "kclprep"
     KCL_TEST = "test"
-    SHEBA_TEST = 'shebatest'
+    SHEBA_TEST = "shebatest"
+    SHEBA_PREP = 'shebaprep'
 
 
 def define_url(env):
@@ -26,6 +27,8 @@ def define_url(env):
         base_url = base_url + "KCL/Preprod/"
     elif env == Env.SHEBA_TEST.value:
         base_url = base_url + "Sheba/Test/"
+    elif env == Env.SHEBA_PREP.value:
+        base_url = base_url + "Sheba/Preprod/"
 
     today = date.today()  # - timedelta(days= 3)
     base_url = base_url + str(today.month - 1) + "/"
@@ -51,6 +54,12 @@ def scan_athena(query, env):
                        s3_staging_dir='s3://aws-athena-query-results-458907533143-us-west-2/',
                        region_name='us-west-2',
                        schema_name='shebatest')
+        return pd.read_sql(query, conn)
+    if env == Env.SHEBA_PREP.value:
+        conn = connect(profile_name='health',
+                       s3_staging_dir='s3://aws-athena-query-results-458907533143-us-west-2/',
+                       region_name='us-west-2',
+                       schema_name='shebaprep')
         return pd.read_sql(query, conn)
 
 
