@@ -27,7 +27,7 @@ def define_url(env):
     elif env == Env.SHEBA_TEST.value:
         base_url = base_url + "Sheba/Test/"
 
-    today = date.today() # - timedelta(days= 3)
+    today = date.today()  # - timedelta(days= 3)
     base_url = base_url + str(today.month - 1) + "/"
     base_url = base_url + str(today.day) + "/"
     print(base_url)
@@ -56,7 +56,7 @@ def scan_athena(query, env):
 
 def get_list_of_zips():
     files = []
-    json_file_pattern = "[a-zA-Z]*-debug-([a-zA-Z]|[0-9])*_[a-zA-Z]*_jsonFiles_[0-9]*.zip<"
+    json_file_pattern = "[a-zA-Z]*-debug-(?!Sanity)([a-zA-Z]|[0-9])*_[a-zA-Z]*_jsonFiles_[0-9]*.zip<"
     response = requests.get(base_url, auth=('jenkins', 'jenkins123!'))
     if response:
         response_content = str(response.content)
