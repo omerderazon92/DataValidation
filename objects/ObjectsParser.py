@@ -180,6 +180,12 @@ def parse_athena_results(results, action):
                                                         None,
                                                         results[MedicationQueryKeys.HOUR.value][0],
                                                         results[MedicationQueryKeys.MINUTE.value][0])
+
+            if len(medication_object.hour) == 1:
+                medication_object.hour = "0" + medication_object.hour
+            if len(medication_object.minute) == 1:
+                medication_object.minute = "0" + medication_object.minute
+
             return medication_object
 
         if action == ActionTypes.MEDICATION_REPORT.name:
