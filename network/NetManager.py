@@ -56,10 +56,10 @@ def scan_athena(query, env):
                        schema_name='shebatest')
         return pd.read_sql(query, conn)
     if env == Env.SHEBA_PREP.value:
-        conn = connect(profile_name='health',
-                       s3_staging_dir='s3://aws-athena-query-results-458907533143-us-west-2/',
-                       region_name='us-west-2',
-                       schema_name='shebaprep')
+        conn = connect(profile_name='health-customers',
+                       s3_staging_dir='s3://aws-athena-query-results-eu-west-1-036573440528/',
+                       region_name='eu-west-1',
+                       schema_name='kclprep')
         return pd.read_sql(query, conn)
 
 
