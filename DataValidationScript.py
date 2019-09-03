@@ -57,6 +57,7 @@ def main():
             for json_file in jsons_list:
                 logs.append(delimiter)
                 if json_file is None or json_file[JSON] is None or json_file[FILE_NAME] is None:
+                    markFailed()
                     logs.append(
                         json_file[FILE_NAME] + "Couldn't parse  into a JSON file, might be an empty json. moving to "
                                                "the "
@@ -67,6 +68,7 @@ def main():
                 # Extract the right action from the JSON file
                 actions = extract_required_actions(json.loads(json_file[JSON]))
                 if actions is None or len(actions) <= 0:
+                    markFailed()
                     logs.append(json_file[FILE_NAME] + "Didn't get any action to check - actions list might be empty "
                                                        "or "
                                                        "nil")
@@ -84,6 +86,7 @@ def main():
                     # Parse the JSON file into an object
                     json_file_object = parse_json_file(json.loads(json_file[JSON]), action)
                     if json_file_object is None:
+                        markFailed()
                         logs.append("Couldn't parse the JSON into an object - moving to the next "
                                     "file...")
                         fail_increment()
@@ -92,6 +95,7 @@ def main():
                     # Extract an Athena query from the object
                     query = create_query(json_file_object, action, env)
                     if query is None:
+                        markFailed()
                         logs.append(
                             "Couldn't extract any query - moving to the next action or file")
                         fail_increment()
@@ -100,6 +104,7 @@ def main():
                     # Scan Athena using a connector and the extracted query
                     results = scan_athena(query, env)
                     if results.empty:
+                        markFailed()
                         logs.append("Couldn't query from athena or got an empty respone, moving to "
                                     "next "
                                     "action or file...(Might be related to the pipeline)")
@@ -109,6 +114,7 @@ def main():
                     # Parse the results into an object
                     athena_results_object = parse_athena_results(results, action)
                     if athena_results_object is None:
+                        markFailed()
                         logs.append("Couldn't parse athena results into an object, moving to "
                                     "the next action "
                                     "or file...")
