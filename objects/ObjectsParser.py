@@ -96,6 +96,19 @@ def parse_json_file(json_file, action):
                                                         None)
             return medication_object
 
+        if action == ActionTypes.MEDICATION_SKIPPED.name:
+            medication_object = MedicationReportResults(json_file[MedicationQueryKeys.USER_NAME.value],
+                                                        json_file[MedicationQueryKeys.MEDICATION_NAME.value],
+                                                        None,
+                                                        None,
+                                                        None,
+                                                        json_file[MedicationQueryKeys.STATUS.value],
+                                                        None,
+                                                        json_file[MedicationQueryKeys.REPORT_TS.value],
+                                                        None,
+                                                        None)
+            return medication_object
+
     except KeyError or ValueError:
         return
 
@@ -196,6 +209,19 @@ def parse_athena_results(results, action):
                                                         None,
                                                         results[MedicationQueryKeys.STATUS.value][0],
                                                         results[MedicationQueryKeys.MEDICATION_TAKEN_TS.value][0],
+                                                        results[MedicationQueryKeys.REPORT_TS.value][0],
+                                                        None,
+                                                        None)
+            return medication_object
+
+        if action == ActionTypes.MEDICATION_SKIPPED.name:
+            medication_object = MedicationReportResults(results[MedicationQueryKeys.USER_NAME.value][0],
+                                                        results[MedicationQueryKeys.MEDICATION_NAME.value][0],
+                                                        None,
+                                                        None,
+                                                        None,
+                                                        results[MedicationQueryKeys.STATUS.value][0],
+                                                        None,
                                                         results[MedicationQueryKeys.REPORT_TS.value][0],
                                                         None,
                                                         None)

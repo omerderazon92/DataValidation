@@ -17,6 +17,7 @@ class ActionTypes(Enum):
     MEDICATION_SCHEDULE = "5"
     MEDICATION_REPORT = "6"
     NO_ACTION = "7"
+    MEDICATION_SKIPPED = "9"
 
 
 def extract_required_actions(loaded_json):
@@ -64,7 +65,7 @@ def create_query(object, action, env):
                                                            effective_end=object.effective_end,
                                                            env=env)
 
-        if action == ActionTypes.MEDICATION_REPORT.name:
+        if action == ActionTypes.MEDICATION_REPORT.name or action == ActionTypes.MEDICATION_SKIPPED.name:
             return basicMedicationRerportQuery.substitute(user_name=object.user_name,
                                                           medication_name=object.medication_name,
                                                           report_ts=object.report_ts,
