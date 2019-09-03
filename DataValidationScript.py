@@ -20,6 +20,11 @@ delimiter = "----------------" \
 centered_title = "                                "
 
 
+def markFailed():
+    global didFailed
+    didFailed = True
+
+
 def fail_increment():
     global tests_failed
     tests_failed += 1
@@ -46,7 +51,7 @@ def main():
     if zips:
         for zip in zips:
             logs.append(delimiter)
-            logs.append( centered_title + "Current Bundle: " + zip)
+            logs.append(centered_title + "Current Bundle: " + zip)
             # Download the file from the artifactory, list of 1. json 2. file
             jsons_list = download_file(zip)
             for json_file in jsons_list:
@@ -114,12 +119,12 @@ def main():
                     if compare_objects_with_action(action, json_file_object, athena_results_object, logs):
                         logs.append("*Success*")
                     else:
-                        didFailed = True
+                        markFailed()
                         logs.append("Expected: (Test Results) " + str(json_file_object))
                         logs.append("Actual: (Server Results) " + str(athena_results_object))
                         fail_increment()
 
-        logs.insert(0,"\n" + str(tests_failed) + "/" + str(amount_of_validations) + " Validations have failed")
+        logs.insert(0, "\n" + str(tests_failed) + "/" + str(amount_of_validations) + " Validations have failed")
     else:
         logs.append("Couldn't get any relevant JSON Zips files to validate - aborting process")
     write_log_file(logs)
