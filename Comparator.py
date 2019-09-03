@@ -40,4 +40,9 @@ def compare_objects_with_action(action, json_file_object, athena_results_object,
             logs.append("*Failed*")
             return False
         return True
+    if action == ActionTypes.MEDICATION_SKIPPED.name:
+        if json_file_object.status != athena_results_object.status:
+            logs.append("*Failure*")
+            return False
+        return True
     pass
