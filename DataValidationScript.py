@@ -5,6 +5,7 @@ from network.NetManager import download_file, get_list_of_zips, scan_athena, def
 from objects.ObjectsParser import parse_json_file, parse_athena_results
 from queries.QueriesManager import create_query, extract_required_actions, ActionTypes
 
+didFailed = False
 logs = []
 tests_failed = 0
 env = sys.argv[1]
@@ -29,6 +30,11 @@ def write_log_file(logs):
     text_file = open("Logs.txt", "w")
     text_file.write(logs_file)
     text_file.close()
+
+    if didFailed:
+        open("Failure", "w")
+    else:
+        open("Success", "w")
     print(logs_file)
     pass
 
@@ -108,6 +114,7 @@ def main():
                     if compare_objects_with_action(action, json_file_object, athena_results_object, logs):
                         logs.append("*Success*")
                     else:
+                        didFailed = True
                         logs.append("Expected: (Test Results) " + str(json_file_object))
                         logs.append("Actual: (Server Results) " + str(athena_results_object))
                         fail_increment()
