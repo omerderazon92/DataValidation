@@ -40,7 +40,8 @@ basicGyroQuery = Template("""SELECT NEW.user_name,
                 date_diff('Second', min(step_start),max(assessment_end)) assessment_duration_second
                 FROM "assessments_steps"
                 where step_name='Stand with arms at rest'
-                and assessment_end = timestamp '$assessment_end'
+                and assessment_end + interval '5' second > timestamp '$assessment_end'
+                and assessment_end - interval '5' second < timestamp '$assessment_end'
                 GROUP BY user_id, user_name, assessment_report_id, assessment_name, assessment_start, assessment_end ,step_start ) A_S
                 LEFT JOIN
                 (SELECT user_id,
