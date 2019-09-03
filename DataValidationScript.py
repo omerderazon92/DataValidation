@@ -37,9 +37,9 @@ def write_log_file(logs):
     text_file.close()
 
     if didFailed:
-        open("Failure", "w")
+        open("Failure.txt", "w")
     else:
-        open("Success", "w")
+        open("Success.txt", "w")
     print(logs_file)
     pass
 
