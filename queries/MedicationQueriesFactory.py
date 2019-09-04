@@ -19,9 +19,9 @@ basicMedicationScheduleQuery = Template("""SELECT * FROM "$env"."medication_sche
 where user_name = '$user_name'
 and medication_name = '$medication_name'
 and effective_end + interval '5' second > timestamp '$effective_end'
-and effective_end - interval '5' second < timestamp '$effective_end'
-and effective_start + interval '5' second > timestamp '$effective_start'
-and effective_start - interval '5' second < timestamp '$effective_start'
+and effective_end - interval '7' second < timestamp '$effective_end'
+and effective_start + interval '7' second > timestamp '$effective_start'
+and effective_start - interval '7' second < timestamp '$effective_start'
 limit 100;""")
 
 basicMedicationRerportQuery = Template("""SELECT * FROM "$env"."medication_report"
