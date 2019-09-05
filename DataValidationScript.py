@@ -35,7 +35,6 @@ def write_log_file(logs):
     text_file = open("Logs.txt", "w")
     text_file.write(logs_file)
     text_file.close()
-
     if didFailed:
         open("Failure.txt", "w")
     else:
@@ -78,7 +77,7 @@ def main():
                 # Iterates over the actions and validate the right modules
                 for action in actions:
                     logs.append("Validating " + json_file[FILE_NAME] + " " + action + ":")
-                    if action == ActionTypes.NO_ACTION.name:
+                    if action == ActionTypes.NO_ACTION.name or action == ActionTypes.GYRO_DATA.name:
                         logs.append("There is no need for validation")
                         continue
 
