@@ -18,6 +18,7 @@ class ActionTypes(Enum):
     MEDICATION_REPORT = "6"
     NO_ACTION = "7"
     MEDICATION_SKIPPED = "9"
+    TRIGGERED_QUESTIONNAIRE = "10"
 
 
 def extract_required_actions(loaded_json):

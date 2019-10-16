@@ -1,0 +1,112 @@
+
+5/42 Validations have failed
+------------------------------------------------------------------------------------------------------------------------------------------------------ 
+                                Current Bundle: ShebaApp-debug-Assessments_Preprod_jsonFiles_1571136625163.zip
+------------------------------------------------------------------------------------------------------------------------------------------------------ 
+Validating BDD-1571136625163-test08BDDOnAssessmentReminderIgnoreScenario.json ASSESSMENT_REPORT:
+*Success*
+Validating BDD-1571136625163-test08BDDOnAssessmentReminderIgnoreScenario.json TRIGGERED_QUESTIONNAIRE:
+*Success*
+------------------------------------------------------------------------------------------------------------------------------------------------------ 
+Validating BDD-1571136625163-test07BDDOffAssessmentReminderIgnoreScenario.json ASSESSMENT_REPORT:
+*Success*
+Validating BDD-1571136625163-test07BDDOffAssessmentReminderIgnoreScenario.json TRIGGERED_QUESTIONNAIRE:
+*Success*
+------------------------------------------------------------------------------------------------------------------------------------------------------ 
+Validating BDD-1571136625163-test14BDDRetakeClinicalAssessmentScenario.json ASSESSMENT_REPORT:
+*Success*
+Validating BDD-1571136625163-test14BDDRetakeClinicalAssessmentScenario.json TRIGGERED_QUESTIONNAIRE:
+Couldn't parse the JSON into an object - moving to the next file...
+------------------------------------------------------------------------------------------------------------------------------------------------------ 
+Validating BDD-1571136625163-AssessmentQuitFirstStep(assessmentName:scenario.json NO_ACTION:
+There is no need for validation
+------------------------------------------------------------------------------------------------------------------------------------------------------ 
+Validating BDD-1571136625163-test18BDDOffAssessmentFromHomeScenario.json ASSESSMENT_REPORT:
+*Success*
+Validating BDD-1571136625163-test18BDDOffAssessmentFromHomeScenario.json TRIGGERED_QUESTIONNAIRE:
+*Success*
+------------------------------------------------------------------------------------------------------------------------------------------------------ 
+Validating BDD-1571136625163-test10BDDOnAssessmentReminderSnoozeScenario.json ASSESSMENT_REPORT:
+*Success*
+Validating BDD-1571136625163-test10BDDOnAssessmentReminderSnoozeScenario.json TRIGGERED_QUESTIONNAIRE:
+*Success*
+------------------------------------------------------------------------------------------------------------------------------------------------------ 
+Validating BDD-1571136625163-test02BDDOnAssessmentFromHomeScenario.json ASSESSMENT_REPORT:
+*Success*
+Validating BDD-1571136625163-test02BDDOnAssessmentFromHomeScenario.json TRIGGERED_QUESTIONNAIRE:
+*Success*
+------------------------------------------------------------------------------------------------------------------------------------------------------ 
+Validating BDD-1571136625163-test17BDDClinicalAssessmentPartialScenario.json ASSESSMENT_REPORT:
+*Success*
+Validating BDD-1571136625163-test17BDDClinicalAssessmentPartialScenario.json TRIGGERED_QUESTIONNAIRE:
+Couldn't parse the JSON into an object - moving to the next file...
+------------------------------------------------------------------------------------------------------------------------------------------------------ 
+Validating BDD-1571136625163-test16BDDOnAssessmentPartialFromHomeScenario.json ASSESSMENT_REPORT:
+*Success*
+Validating BDD-1571136625163-test16BDDOnAssessmentPartialFromHomeScenario.json TRIGGERED_QUESTIONNAIRE:
+Couldn't query from athena or got an empty respone, moving to next action or file...(Might be related to the pipeline)
+------------------------------------------------------------------------------------------------------------------------------------------------------ 
+Validating BDD-1571136625163-test19BDDOnAssessmentFromHomeScenario.json ASSESSMENT_REPORT:
+*Success*
+Validating BDD-1571136625163-test19BDDOnAssessmentFromHomeScenario.json TRIGGERED_QUESTIONNAIRE:
+*Success*
+------------------------------------------------------------------------------------------------------------------------------------------------------ 
+Validating BDD-1571136625163-test09BDDOffAssessmentReminderSnoozeScenario.json ASSESSMENT_REPORT:
+*Success*
+Validating BDD-1571136625163-test09BDDOffAssessmentReminderSnoozeScenario.json TRIGGERED_QUESTIONNAIRE:
+*Success*
+------------------------------------------------------------------------------------------------------------------------------------------------------ 
+Validating BDD-1571136625163-test11BDDClinicalAssessmentScenario.json ASSESSMENT_REPORT:
+*Success*
+Validating BDD-1571136625163-test11BDDClinicalAssessmentScenario.json TRIGGERED_QUESTIONNAIRE:
+Couldn't parse the JSON into an object - moving to the next file...
+------------------------------------------------------------------------------------------------------------------------------------------------------ 
+Validating BDD-1571136625163-test13BDDRetakeOnAssessmentFromCurrentScenario.json ASSESSMENT_REPORT:
+*Success*
+Validating BDD-1571136625163-test13BDDRetakeOnAssessmentFromCurrentScenario.json TRIGGERED_QUESTIONNAIRE:
+*Success*
+------------------------------------------------------------------------------------------------------------------------------------------------------ 
+Validating BDD-1571136625163-test03BDDOffAssessmentFromCurrentScenario.json ASSESSMENT_REPORT:
+*Success*
+Validating BDD-1571136625163-test03BDDOffAssessmentFromCurrentScenario.json TRIGGERED_QUESTIONNAIRE:
+*Success*
+------------------------------------------------------------------------------------------------------------------------------------------------------ 
+Validating BDD-1571136625163-test01BDDOffAssessmentFromHomeScenario.json ASSESSMENT_REPORT:
+*Success*
+Validating BDD-1571136625163-test01BDDOffAssessmentFromHomeScenario.json TRIGGERED_QUESTIONNAIRE:
+*Success*
+------------------------------------------------------------------------------------------------------------------------------------------------------ 
+Validating BDD-1571136625163-test12BDDRetakeOffAssessmentFromCurrentScenario.json ASSESSMENT_REPORT:
+*Success*
+Validating BDD-1571136625163-test12BDDRetakeOffAssessmentFromCurrentScenario.json TRIGGERED_QUESTIONNAIRE:
+*Success*
+------------------------------------------------------------------------------------------------------------------------------------------------------ 
+Validating BDD-1571136625163-test23BDDCheckReminderDontShowAfterCompletingO╫₧Assessment.json ASSESSMENT_REPORT:
+*Success*
+Validating BDD-1571136625163-test23BDDCheckReminderDontShowAfterCompletingO╫₧Assessment.json TRIGGERED_QUESTIONNAIRE:
+*Success*
+------------------------------------------------------------------------------------------------------------------------------------------------------ 
+Validating BDD-1571136625163-test05BDDOffAssessmentReminderDoNowScenario.json ASSESSMENT_REPORT:
+*Success*
+Validating BDD-1571136625163-test05BDDOffAssessmentReminderDoNowScenario.json TRIGGERED_QUESTIONNAIRE:
+*Success*
+------------------------------------------------------------------------------------------------------------------------------------------------------ 
+Validating BDD-1571136625163-test06BDDOnAssessmentReminderDoNowScenario.json ASSESSMENT_REPORT:
+*Success*
+Validating BDD-1571136625163-test06BDDOnAssessmentReminderDoNowScenario.json TRIGGERED_QUESTIONNAIRE:
+*Success*
+------------------------------------------------------------------------------------------------------------------------------------------------------ 
+Validating BDD-1571136625163-test15BDDOffAssessmentPartialFromHomeScenario.json ASSESSMENT_REPORT:
+*Success*
+Validating BDD-1571136625163-test15BDDOffAssessmentPartialFromHomeScenario.json TRIGGERED_QUESTIONNAIRE:
+Couldn't query from athena or got an empty respone, moving to next action or file...(Might be related to the pipeline)
+------------------------------------------------------------------------------------------------------------------------------------------------------ 
+Validating BDD-1571136625163-test04BDDOnAssessmentFromCurrentScenario.json ASSESSMENT_REPORT:
+*Success*
+Validating BDD-1571136625163-test04BDDOnAssessmentFromCurrentScenario.json TRIGGERED_QUESTIONNAIRE:
+*Success*
+------------------------------------------------------------------------------------------------------------------------------------------------------ 
+Validating BDD-1571136625163-test22BDDCheckReminderDontShowAfterCompletingOffAssessment.json ASSESSMENT_REPORT:
+*Success*
+Validating BDD-1571136625163-test22BDDCheckReminderDontShowAfterCompletingOffAssessment.json TRIGGERED_QUESTIONNAIRE:
+*Success*
