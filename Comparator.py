@@ -20,9 +20,13 @@ def compare_objects_with_action(action, json_file_object, athena_results_object,
             return False
         return True
     if action == ActionTypes.ASSESSMENT_REPORT.name:
-        if json_file_object.assessment_name != athena_results_object.assessment_name or json_file_object.status != athena_results_object.status:
-            logs.append("*Failed*")
+        if str(json_file_object.numeber_of_steps) != str(athena_results_object.numeber_of_steps):
+            logs.append("*Differet amount of steps")
             return False
+        else:
+            if json_file_object.assessment_name != athena_results_object.assessment_name or json_file_object.status != athena_results_object.status:
+                logs.append("*Failed*")
+                return False
         return True
     if action == ActionTypes.GYRO_DATA.name:
         gyro_treshold = 0.95
@@ -44,5 +48,7 @@ def compare_objects_with_action(action, json_file_object, athena_results_object,
         if json_file_object.status != athena_results_object.status:
             logs.append("*Failure*")
             return False
+        return True
+    if action == ActionTypes.TRIGGERED_QUESTIONNAIRE.name:
         return True
     pass

@@ -71,5 +71,12 @@ def create_query(object, action, env):
                                                           report_ts=object.report_ts,
                                                           env=env)
 
+        if action == ActionTypes.TRIGGERED_QUESTIONNAIRE.name:
+            return basicQuestionnaireReportSqlQuery.substitute(user_name=object.user_name,
+                                                               questionnaire_name=object.triggered_questionnaire,
+                                                               questionnaire_timestamp_start=object.triggered_start_time,
+                                                               questionnaire_timestamp_end=object.triggered_start_time,
+                                                               env=env)
+
     except KeyError or ValueError:
         return

@@ -8,9 +8,14 @@ class AssessmentQueryKeys(Enum):
     STATUS = "assessment_status"
     ASSESSMENT_START_TIME = "assessment_start"
     ASSESSMENT_END_TIME = 'assessment_end'
-    TRIGGERED_START_TIME = 'triggered_start_time'
-    TRIGGERED_END_TIME = 'triggered_end_time'
+    TRIGGERED_START_TIME = 'triggered_start'
+    TRIGGERED_END_TIME = 'triggered_end'
     ACTIONS = 'actions'
+    NUMBER_OF_STEPS = 'numeber_of_steps'
+    TRIGGERED_QUESTIONNAIRE = 'triggered_questionnaire'
+    TRIGGERED_QUESTIONNAIRE_START = 'questionnaire_timestamp_start'
+    TRIGGERED_QUESTIONNAIRE_END = 'questionnaire_timestamp_end'
+    TRIGGERED_QUESTIONNAIRE_NAME = 'questionnaire_name'
 
 
 basicAssessmentReportQuery = Template("""SELECT * FROM "$env"."assessments_steps" 

@@ -52,7 +52,9 @@ def parse_json_file(json_file, action):
                                                         json_file[AssessmentQueryKeys.ASSESSMENT_END_TIME.value],
                                                         None,  # Triggered_STS
                                                         None,  # Triggered_ETS
-                                                        json_file[AssessmentQueryKeys.STATUS.value])
+                                                        json_file[AssessmentQueryKeys.STATUS.value],
+                                                        None, # Triggered name
+                                                        json_file[AssessmentQueryKeys.NUMBER_OF_STEPS.value])
             return assessment_object
 
         if action == ActionTypes.DIARY_REPORT.name:
@@ -109,6 +111,20 @@ def parse_json_file(json_file, action):
                                                         None)
             return medication_object
 
+        if action == ActionTypes.TRIGGERED_QUESTIONNAIRE.name:
+            # create an object from the athena scan
+            assessment_object = AssessmentReportResults(json_file[AssessmentQueryKeys.USER_NAME.value],
+                                                        None,
+                                                        None,  # Action
+                                                        None,
+                                                        None,
+                                                        json_file[AssessmentQueryKeys.TRIGGERED_START_TIME.value],  # Triggered_STS
+                                                        json_file[AssessmentQueryKeys.TRIGGERED_END_TIME.value],  # Triggered_ETS
+                                                        None,
+                                                        json_file[AssessmentQueryKeys.TRIGGERED_QUESTIONNAIRE.value], # Triggered name
+                                                        None)
+            return assessment_object
+
     except KeyError or ValueError:
         return
 
@@ -158,6 +174,10 @@ def parse_athena_results(results, action):
                                                         None,  # Triggered_STS
                                                         None,  # Triggered_ETS
                                                         results[AssessmentQueryKeys.STATUS.value][0])
+
+            number_of_steps = results[QuestionnaireQueryKeys.USER_NAME.value]
+            assessment_object.numeber_of_steps = number_of_steps.size
+
             return assessment_object
 
         if action == ActionTypes.GYRO_DATA.name:
@@ -226,6 +246,19 @@ def parse_athena_results(results, action):
                                                         None,
                                                         None)
             return medication_object
+
+        if action == ActionTypes.TRIGGERED_QUESTIONNAIRE.name:
+            assessment_object = AssessmentReportResults(results[AssessmentQueryKeys.USER_NAME.value][0],
+                                                        None,
+                                                        None,
+                                                        None,
+                                                        None,
+                                                        results[AssessmentQueryKeys.TRIGGERED_QUESTIONNAIRE_START.value][0],
+                                                        results[AssessmentQueryKeys.TRIGGERED_QUESTIONNAIRE_END.value][0],
+                                                        None,
+                                                        results[AssessmentQueryKeys.TRIGGERED_QUESTIONNAIRE_NAME.value][0],
+                                                        None)
+            return assessment_object
 
     except KeyError or ValueError:
         return
