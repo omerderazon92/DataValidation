@@ -44,7 +44,11 @@ class AssessmentReportResults(object):
         return super().__hash__()
 
     def __repr__(self):
-        meta_data = self.user_name + " " + self.assessment_name + " Status: " + self.status
+        meta_data = self.user_name + " "
+        if self.assessment_name is not None and self.status is not None:
+            meta_data = meta_data + self.assessment_name + " Status: " + self.status
+        if self.numeber_of_steps is not None:
+            meta_data = meta_data + self.numeber_of_steps
         return meta_data
 
 
