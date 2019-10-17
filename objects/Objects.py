@@ -28,7 +28,8 @@ class QuestionnaireReportResults(object):
 
 class AssessmentReportResults(object):
     def __init__(self, user_name, assessment_name, actions="", assessment_start="",
-                 assessment_end="", triggered_start_time="", triggered_end_time="", status="", triggered_questionnaire = "", numeber_of_steps = ""):
+                 assessment_end="", triggered_start_time="", triggered_end_time="", status="",
+                 triggered_questionnaire="", numeber_of_steps=""):
         self.user_name = user_name
         self.assessment_name = assessment_name
         self.actions = actions
@@ -110,9 +111,9 @@ class MedicationReportResults(object):
     def __repr__(self):
         meta_data = "Medication name: " + self.medication_name
 
-        if self. effective_start is not  None and self.effective_end is not None:
+        if self.effective_start is not None and self.effective_end is not None:
             meta_data = " Effective start: " + str(self.effective_start) + " Effective end: " + str(self.effective_end)
-        if self. hour is not None and self.minute is not None:
+        if self.hour is not None and self.minute is not None:
             meta_data = meta_data + " Hour: " + str(self.hour) + " Minute: " + str(self.minute)
         if self.status is not None:
             meta_data = meta_data + " Status: " + self.status

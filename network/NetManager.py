@@ -30,7 +30,7 @@ def define_url(env):
     elif env == Env.SHEBA_PREP.value:
         base_url = base_url + "Sheba/Preprod/"
 
-    today = date.today()  # - timedelta(days= 3)
+    today = date.today() - timedelta(days= 2)
     base_url = base_url + str(today.month - 1) + "/"
     base_url = base_url + str(today.day) + "/"
     print(base_url)

@@ -8,7 +8,7 @@ from queries.QueriesManager import create_query, extract_required_actions, Actio
 didFailed = False
 logs = []
 tests_failed = 0
-env = sys.argv[1]
+env = "shebaprep"
 FILE_NAME = 1
 JSON = 0
 delimiter = "----------------" \

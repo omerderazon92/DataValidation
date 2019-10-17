@@ -1,6 +1,6 @@
 from enum import Enum
 
-from queries.AssessmentQueriesFactory import basicAssessmentReportQuery
+from queries.AssessmentQueriesFactory import basicAssessmentReportQuery, basicTappingReportQuery
 from queries.QuestionnaireQueriesFactory import basicQuestionnaireReportSqlQuery, basicQuestionnaireScheduleQuery, \
     QuestionnaireQueryKeys
 from queries.DiaryQueriesFactory import basicDiaryReportQuery
@@ -17,8 +17,10 @@ class ActionTypes(Enum):
     MEDICATION_SCHEDULE = "5"
     MEDICATION_REPORT = "6"
     NO_ACTION = "7"
+    TAPPING_STEP = "8"
     MEDICATION_SKIPPED = "9"
     TRIGGERED_QUESTIONNAIRE = "10"
+    ASSESSMENT_REPORT_RETRY = "12"
 
 
 def extract_required_actions(loaded_json):
