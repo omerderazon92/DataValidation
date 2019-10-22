@@ -81,5 +81,9 @@ def create_query(object, action, env):
                                                                questionnaire_timestamp_end=object.triggered_start_time,
                                                                env=env)
 
+        if action == ActionTypes.TAPPING_STEP.name:
+            return basicTappingReportQuery.substitute(user_name=object.user_name,
+                                                      env=env)
+
     except KeyError or ValueError:
         return

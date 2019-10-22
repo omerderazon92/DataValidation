@@ -1,5 +1,5 @@
 from objects.Objects import QuestionnaireReportResults, AssessmentReportResults, AssessmentDataValidation, \
-    DiaryReportResults, MedicationReportResults
+    DiaryReportResults, MedicationReportResults, TappingStep
 from queries.AssessmentQueriesFactory import AssessmentQueryKeys
 from queries.DiaryQueriesFactory import DiaryQueryKeys
 from queries.QueriesManager import ActionTypes
@@ -53,7 +53,7 @@ def parse_json_file(json_file, action):
                                                         None,  # Triggered_STS
                                                         None,  # Triggered_ETS
                                                         json_file[AssessmentQueryKeys.STATUS.value],
-                                                        None, # Triggered name
+                                                        None,  # Triggered name
                                                         json_file[AssessmentQueryKeys.NUMBER_OF_STEPS.value])
             return assessment_object
 
@@ -118,12 +118,21 @@ def parse_json_file(json_file, action):
                                                         None,  # Action
                                                         None,
                                                         None,
-                                                        json_file[AssessmentQueryKeys.TRIGGERED_START_TIME.value],  # Triggered_STS
-                                                        json_file[AssessmentQueryKeys.TRIGGERED_END_TIME.value],  # Triggered_ETS
+                                                        json_file[AssessmentQueryKeys.TRIGGERED_START_TIME.value],
+                                                        # Triggered_STS
+                                                        json_file[AssessmentQueryKeys.TRIGGERED_END_TIME.value],
+                                                        # Triggered_ETS
                                                         None,
-                                                        json_file[AssessmentQueryKeys.TRIGGERED_QUESTIONNAIRE.value], # Triggered name
+                                                        json_file[AssessmentQueryKeys.TRIGGERED_QUESTIONNAIRE.value],
+                                                        # Triggered name
                                                         None)
             return assessment_object
+
+        if action == ActionTypes.TAPPING_STEP.name:
+            tapping_step = TappingStep(16,
+                                       json_file[AssessmentQueryKeys.USER_NAME.value])
+
+            return tapping_step
 
     except KeyError or ValueError:
         return
@@ -253,12 +262,21 @@ def parse_athena_results(results, action):
                                                         None,
                                                         None,
                                                         None,
-                                                        results[AssessmentQueryKeys.TRIGGERED_QUESTIONNAIRE_START.value][0],
-                                                        results[AssessmentQueryKeys.TRIGGERED_QUESTIONNAIRE_END.value][0],
+                                                        results[
+                                                            AssessmentQueryKeys.TRIGGERED_QUESTIONNAIRE_START.value][0],
+                                                        results[AssessmentQueryKeys.TRIGGERED_QUESTIONNAIRE_END.value][
+                                                            0],
                                                         None,
-                                                        results[AssessmentQueryKeys.TRIGGERED_QUESTIONNAIRE_NAME.value][0],
+                                                        results[AssessmentQueryKeys.TRIGGERED_QUESTIONNAIRE_NAME.value][
+                                                            0],
                                                         None)
             return assessment_object
+
+        if action == ActionTypes.TAPPING_STEP.name:
+            amount_of_tapping = results["step_attempts"]
+            tapping_step = TappingStep(amount_of_tapping.size,
+                                       results[AssessmentQueryKeys.USER_NAME.value][0])
+            return tapping_step
 
     except KeyError or ValueError:
         return

@@ -120,3 +120,13 @@ class MedicationReportResults(object):
         if self.medication_taken_ts is not None:
             meta_data = meta_data + " Medication taken ts: " + str(self.medication_taken_ts)
         return meta_data
+
+
+class TappingStep(object):
+    def __init__(self, tapping, user_name):
+        self.tapping = tapping
+        self.user_name = user_name
+
+    def __repr__(self):
+        meta_data = "Number of taps are " + str(self.tapping)
+        return meta_data

@@ -51,4 +51,9 @@ def compare_objects_with_action(action, json_file_object, athena_results_object,
         return True
     if action == ActionTypes.TRIGGERED_QUESTIONNAIRE.name:
         return True
+    if action == ActionTypes.TAPPING_STEP.name:
+        if json_file_object.tapping != athena_results_object.tapping:
+            logs.append("*Not enuagh taps *")
+            return False
+        return True
     pass
