@@ -29,7 +29,7 @@ class QuestionnaireReportResults(object):
 class AssessmentReportResults(object):
     def __init__(self, user_name, assessment_name, actions="", assessment_start="",
                  assessment_end="", triggered_start_time="", triggered_end_time="", status="",
-                 triggered_questionnaire="", numeber_of_steps=""):
+                 triggered_questionnaire="", numeber_of_steps="", steps=[], step_attempts=""):
         self.user_name = user_name
         self.assessment_name = assessment_name
         self.actions = actions
@@ -40,6 +40,8 @@ class AssessmentReportResults(object):
         self.triggered_questionnaire = triggered_questionnaire
         self.numeber_of_steps = numeber_of_steps
         self.status = status
+        self.steps = steps
+        self.step_attempts = step_attempts
 
     def __hash__(self) -> int:
         return super().__hash__()
@@ -49,7 +51,11 @@ class AssessmentReportResults(object):
         if self.assessment_name is not None and self.status is not None:
             meta_data = meta_data + self.assessment_name + " Status: " + self.status
         if self.numeber_of_steps is not None:
-            meta_data = meta_data + self.numeber_of_steps
+            meta_data = meta_data + " Number of steps done: " + str(self.numeber_of_steps)
+        if self.steps is not None:
+            meta_data = meta_data + " Steps names: " + str(self.steps)
+        if self.step_attempts is not None:
+            meta_data = meta_data + " Number of attempts of each step: " + str(self.step_attempts)
         return meta_data
 
 

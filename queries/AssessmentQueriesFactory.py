@@ -23,7 +23,7 @@ where user_name  = '$user_name'
 and assessment_name = '$assessment_name'
 and timestamp '$assessment_start' > assessment_start - interval '1' minute
 and timestamp '$assessment_end' < assessment_end + interval '1' minute
-order by assessment_start desc
+order by step_start 
 limit 100;;""")
 
 basicTappingReportQuery = Template ("""SELECT * FROM "$env"."assessments_tapping" 

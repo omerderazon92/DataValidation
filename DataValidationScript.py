@@ -58,7 +58,7 @@ def main():
                 if json_file is None or json_file[JSON] is None or json_file[FILE_NAME] is None:
                     markFailed()
                     logs.append(
-                        json_file[FILE_NAME] + "Couldn't parse  into a JSON file, might be an empty json. moving to "
+                        json_file[FILE_NAME] + "Failed, Couldn't parse  into a JSON file, might be an empty json. moving to "
                                                "the "
                                                "next file...")
                     fail_increment()
@@ -68,7 +68,7 @@ def main():
                 actions = extract_required_actions(json.loads(json_file[JSON]))
                 if actions is None or len(actions) <= 0:
                     markFailed()
-                    logs.append(json_file[FILE_NAME] + "Didn't get any action to check - actions list might be empty "
+                    logs.append(json_file[FILE_NAME] + "Failed, Didn't get any action to check - actions list might be empty "
                                                        "or "
                                                        "nil")
                     fail_increment()
@@ -86,7 +86,7 @@ def main():
                     json_file_object = parse_json_file(json.loads(json_file[JSON]), action)
                     if json_file_object is None:
                         markFailed()
-                        logs.append("Couldn't parse the JSON into an object - moving to the next "
+                        logs.append("Failed, Couldn't parse the JSON into an object - moving to the next "
                                     "file...")
                         fail_increment()
                         continue
@@ -96,7 +96,7 @@ def main():
                     if query is None:
                         markFailed()
                         logs.append(
-                            "Couldn't extract any query - moving to the next action or file")
+                            "Failed, Couldn't extract any query - moving to the next action or file")
                         fail_increment()
                         continue
 
@@ -104,7 +104,7 @@ def main():
                     results = scan_athena(query, env)
                     if results.empty:
                         markFailed()
-                        logs.append("Couldn't query from athena or got an empty respone, moving to "
+                        logs.append("Failed, Couldn't query from athena or got an empty respone, moving to "
                                     "next "
                                     "action or file...(Might be related to the pipeline)")
                         fail_increment()
@@ -114,7 +114,7 @@ def main():
                     athena_results_object = parse_athena_results(results, action)
                     if athena_results_object is None:
                         markFailed()
-                        logs.append("Couldn't parse athena results into an object, moving to "
+                        logs.append("Failed, Couldn't parse athena results into an object, moving to "
                                     "the next action "
                                     "or file...")
                         fail_increment()

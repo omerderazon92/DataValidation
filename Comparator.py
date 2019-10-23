@@ -20,13 +20,18 @@ def compare_objects_with_action(action, json_file_object, athena_results_object,
             return False
         return True
     if action == ActionTypes.ASSESSMENT_REPORT.name:
-        if str(json_file_object.numeber_of_steps) != str(athena_results_object.numeber_of_steps):
-            logs.append("*Differet amount of steps")
+        if str(json_file_object.step_attempts) != str(athena_results_object.step_attempts):
+            logs.append("*Failed*")
             return False
-        else:
-            if json_file_object.assessment_name != athena_results_object.assessment_name or json_file_object.status != athena_results_object.status:
-                logs.append("*Failed*")
-                return False
+        if str(json_file_object.numeber_of_steps) != str(athena_results_object.numeber_of_steps):
+            logs.append("*Failed*")
+            return False
+        if json_file_object.steps != athena_results_object.steps:
+            logs.append("*Failed*s")
+            return False
+        if json_file_object.assessment_name != athena_results_object.assessment_name or json_file_object.status != athena_results_object.status:
+            logs.append("*Failed*")
+            return False
         return True
     if action == ActionTypes.GYRO_DATA.name:
         gyro_treshold = 0.95
@@ -40,7 +45,8 @@ def compare_objects_with_action(action, json_file_object, athena_results_object,
             return False
         return True
     if action == ActionTypes.MEDICATION_REPORT.name:
-        if str(json_file_object.medication_taken_ts) != str(athena_results_object.medication_taken_ts) or json_file_object.status != athena_results_object.status:
+        if str(json_file_object.medication_taken_ts) != str(
+                athena_results_object.medication_taken_ts) or json_file_object.status != athena_results_object.status:
             logs.append("*Failed*")
             return False
         return True
@@ -53,7 +59,7 @@ def compare_objects_with_action(action, json_file_object, athena_results_object,
         return True
     if action == ActionTypes.TAPPING_STEP.name:
         if json_file_object.tapping != athena_results_object.tapping:
-            logs.append("*Not enuagh taps *")
+            logs.append("*Failed*")
             return False
         return True
     pass

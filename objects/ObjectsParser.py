@@ -54,7 +54,9 @@ def parse_json_file(json_file, action):
                                                         None,  # Triggered_ETS
                                                         json_file[AssessmentQueryKeys.STATUS.value],
                                                         None,  # Triggered name
-                                                        json_file[AssessmentQueryKeys.NUMBER_OF_STEPS.value])
+                                                        json_file[AssessmentQueryKeys.NUMBER_OF_STEPS.value],
+                                                        json_file["steps"],
+                                                        json_file["step_attempts"])
             return assessment_object
 
         if action == ActionTypes.DIARY_REPORT.name:
@@ -182,10 +184,21 @@ def parse_athena_results(results, action):
                                                         results[AssessmentQueryKeys.ASSESSMENT_END_TIME.value][0],
                                                         None,  # Triggered_STS
                                                         None,  # Triggered_ETS
-                                                        results[AssessmentQueryKeys.STATUS.value][0])
+                                                        results[AssessmentQueryKeys.STATUS.value][0],
+                                                        None,
+                                                        None,
+                                                        None)
 
             number_of_steps = results[QuestionnaireQueryKeys.USER_NAME.value]
             assessment_object.numeber_of_steps = number_of_steps.size
+
+            steps = results["step_name"]
+            steps_to_append = []
+            for index in range(len(steps)):
+                steps_to_append.append(steps[index])
+            assessment_object.steps = steps_to_append
+
+            assessment_object.step_attempts = results["step_attempts"][0]
 
             return assessment_object
 
